@@ -2,10 +2,9 @@ package service;
 
 import model.Task;
 
-import java.util.ArrayList;
 
 public class ManagerTask extends Manager implements ManagerInterface{
-    super(tasksList);
+
 
     public void makeObject(Task task){
         tasksList.add(task);
@@ -44,6 +43,7 @@ public class ManagerTask extends Manager implements ManagerInterface{
         tasksList.remove(id);
     }
 
+    /*Обновление задачи*/
     public void updateTask(Task task){
         for (Task tasks : tasksList) {
             if(task.equals(tasks)) {
@@ -56,6 +56,8 @@ public class ManagerTask extends Manager implements ManagerInterface{
             }
         }
     }
+
+    /*Идентификация id*/
     @Override
     public int identifier() {
         if (tasksList.size() == 0) {
