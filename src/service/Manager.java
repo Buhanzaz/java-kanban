@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Manager {
-    static final String NEW_PROGRESS = "NEW";
+    public final String NEW_PROGRESS = "NEW";
     static final String IN_PROGRESS = "IN_PROGRESS";
     static final String DONE_PROGRESS = "DONE";
 
@@ -16,47 +16,68 @@ public class Manager {
 
     /*Попробовать реализацию через одну коллекцию
     Или сделать этот класс абстрактным и от него наследовать остальные для создания конструктора */
-    ArrayList<Task> taskList;
+    ArrayList<Task> tasksList;
     ArrayList<Subtask> subtasksList;
     ArrayList<Epic> epicsList;
     HashMap<Epic, Subtask> epicAndSubtask;
 
+    public Manager() {
+        this.tasksList = new ArrayList<>();
+    }
 
     /*Создание объекта*/
-    public void makeTask(String name, String description){
-        Task task = new Task(name, description, identifier(), NEW_PROGRESS);
-        taskList.add(task);
+    public void makeTask(Task task){
+        tasksList.add(task);
     }
 
     /*Вывод всех задач*/
 //    А правильно ли я вывожу? нужно вывести список !!! или выводить его массивом
     public void getAllTask(){
-        for (Task task : taskList) {
-            System.out.println(task.name);
-            System.out.println(task.description);
-            System.out.println(task.id);
-            System.out.println(task.status);
+        if (tasksList.size() != 0) {
+            for (Task task : tasksList) {
+                System.out.println(task.toString());
+            }
+        } else {
+            System.out.println("Нет задач");
         }
+    }
+    /*Получение по идентификатору.*/
+//    Сделать реализацию через toString
+    public void getById(int id){
+        Task task = tasksList.get(id);
+        String string = task.toString();
+        System.out.println(string);
     }
 
     /*Удаление всех задач*/
     public void deleteAllTask() {
-        taskList.clear();
+        tasksList.clear();
     }
 
     /*Удаление по идентификатору*/
     public void removeById(int value) {
-            taskList.remove(value);
+        tasksList.remove(value);
     }
 
-
-
-
+    public void updateTask(Task task){
+        for (Task tasks : tasksList) {
+            if(task.equals(tasks)) {
+                //менять ли у обнавленной задачи id на id удаленной задачи???
+                int id = tasks.id;
+                removeById(tasks.id);
+                tasksList.add(id, task);
+                task.id = id;
+                break;
+            } else {
+                continue;
+            }
+        }
+    }
     //Идентификатор задачи
-    private int identifier() {
-        if (taskList.size() == 0) {
+    public int identifier() {
+        if (tasksList.size() == 0) {
             return 0;
         }
-        return taskList.size();
+        return tasksList.size();
     }
 }
