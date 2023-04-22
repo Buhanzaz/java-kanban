@@ -10,14 +10,11 @@ import java.util.HashMap;
 abstract class Manager {
     /*Попробовать реализацию через одну коллекцию
     Или сделать этот класс абстрактным и от него наследовать остальные для создания конструктора */
-    ArrayList<Task> tasksList;
-    ArrayList<Subtask> subtasksList;
-    ArrayList<Epic> epicsList;
+    ArrayList<Task> tasksList = new ArrayList<>();
+    ArrayList<Subtask> subtasksList = new ArrayList<>();
+    ArrayList<Epic> epicsList = new ArrayList<>();
     HashMap<Epic, Subtask> epicAndSubtask;
 
-    public Manager() {
-        this.tasksList = new ArrayList<>();
-        this.subtasksList = new ArrayList<>();
-        this.epicsList = new ArrayList<>();
-    }
+
+
 }
