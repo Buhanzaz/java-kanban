@@ -5,7 +5,7 @@ import model.Task;
 
 public class ManagerTask extends Manager implements ManagerInterface{
 
-
+    /*Добаление в массив*/
     public void makeObject(Task task){
         tasksList.add(task);
     }
