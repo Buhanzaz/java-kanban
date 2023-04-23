@@ -1,10 +1,11 @@
 package service;
 
 
+import model.Epic;
 import model.Subtask;
 
 public class ManagerSubtask extends Manager implements ManagerInterface{
-    public void makeObject(Subtask subtask){
+    public void makeObject(Epic epic, Subtask subtask){
         subtasksList.add(subtask);
     }
 
@@ -55,12 +56,10 @@ public class ManagerSubtask extends Manager implements ManagerInterface{
     }
 
     /*Идентификация id*/
+
     @Override
     public int identifier() {
-        if (subtasksList.size() == 0) {
-            return 0;
-        }
-        return subtasksList.size();
+        return super.identifier();
     }
 }
 

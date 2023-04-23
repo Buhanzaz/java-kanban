@@ -60,9 +60,6 @@ public class ManagerTask extends Manager implements ManagerInterface{
     /*Идентификация id*/
     @Override
     public int identifier() {
-        if (tasksList.size() == 0) {
-            return 0;
-        }
-        return tasksList.size();
+        return super.identifier();
     }
 }

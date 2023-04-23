@@ -2,11 +2,16 @@ package service;
 
 import model.Epic;
 
-public class ManagerEpic extends Manager implements ManagerInterface{
-    
+import java.util.HashMap;
 
+public class ManagerEpic extends Manager implements ManagerInterface{
+
+    /*Добаление в массив*/
     public void makeObject(Epic epic){
         epicsList.add(epic);
+    }
+    public void printHash() {
+        System.out.println(epicHashMap);
     }
 
     /*Вывод всех задач*/
@@ -56,11 +61,9 @@ public class ManagerEpic extends Manager implements ManagerInterface{
     }
 
     /*Идентификация id*/
+
     @Override
     public int identifier() {
-        if (epicsList.size() == 0) {
-            return 0;
-        }
-        return epicsList.size();
+        return super.identifier();
     }
 }
