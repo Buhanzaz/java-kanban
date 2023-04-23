@@ -6,7 +6,7 @@ import model.Task;
 
 import java.util.HashMap;
 
-class Manager {
+public class Manager {
     /*Попробовать реализацию через одну коллекцию
     Или сделать этот класс абстрактным и от него наследовать остальные для создания конструктора */
     private int id = 0;
