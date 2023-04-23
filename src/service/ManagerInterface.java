@@ -9,6 +9,5 @@ public interface ManagerInterface {
     void getAllObject();
     void getById(int id);
     void removeById(int id);
-    int identifier();
 
 }
