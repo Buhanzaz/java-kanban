@@ -9,13 +9,13 @@ import java.util.HashMap;
 class Manager {
     /*Попробовать реализацию через одну коллекцию
     Или сделать этот класс абстрактным и от него наследовать остальные для создания конструктора */
-
+    private int id = 0;
 
     HashMap<Integer, Task> taskHashMap;
     HashMap<Integer, HashMap<Epic, Subtask>> epicHashMap = new HashMap<>();
 
     public void makeTask(Task task){
-        task.setId(++id);
+        task.setId(id++);
         task.setStatus(Status.NEW);
         taskHashMap.put(task.getId(), task);
     }
