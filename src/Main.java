@@ -11,21 +11,23 @@ public class Main {
 
         manager.makeTask(new Task("Задача - 1", "Тест - 1", manager.taskIdGenerator(), Status.NEW));
         manager.makeTask(new Task("Задача - 2", "Тест - 2", manager.taskIdGenerator(), Status.NEW));
-        manager.updateTask(new Task("Задача - 3", "Тест - 3", 0 , Status.NEW));
+        manager.updateTask(new Task("Задача - 3", "Тест - 3", 0, Status.NEW));
 
         manager.makeEpic(new Epic("Епическая Задача - 1", "Епический тест - 1", manager.epicIdGenerator(), Status.NEW));
         manager.makeEpic(new Epic("Епическая Задача - 2", "Епический тест - 2", manager.epicIdGenerator(), Status.NEW));
 
 
-
         System.out.println();
         System.out.println();
         manager.makeSubtask(new Subtask(0, "Подзадача - 1", "Тест Подзадачи - 1", manager.subtaskIdGenerator(), Status.NEW));
-        manager.makeSubtask(new Subtask(1, "Подзадача - 2", "Тест Подзадачи - 2", manager.subtaskIdGenerator(), Status.NEW));
+        manager.makeSubtask(new Subtask(0, "Подзадача - 2", "Тест Подзадачи - 2", manager.subtaskIdGenerator(), Status.NEW));
 
-        manager.getEpicAndSubtask();
+        manager.updateSubtask(new Subtask(0, "Подзадача - 3", "Тест Подзадачи - 3", 0, Status.DONE));
+        manager.updateSubtask(new Subtask(0, "Подзадача - 3", "Тест Подзадачи - 3", 1, Status.DONE));
+
+
+        manager.getEpicAndSubtask(0);
+
 
     }
-    //Сменить тестовую реализацию !!!
-
 }

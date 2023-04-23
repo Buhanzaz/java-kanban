@@ -4,9 +4,10 @@ import service.Status;
 
 import java.util.Objects;
 
-public class Subtask extends Epic{
+public class Subtask extends Epic {
     protected int epicId;
     Status status = getStatus();
+
     public Subtask(int epicId, String name, String description, int id, Status status) {
         super(name, description, id, status);
         this.epicId = epicId;

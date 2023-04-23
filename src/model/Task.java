@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Objects;
+
 import service.Status;
 
 public class Task {
@@ -47,7 +48,6 @@ public class Task {
     public void setDescription(String description) {
         this.description = description;
     }
-
 
     @Override
     public boolean equals(Object o) {

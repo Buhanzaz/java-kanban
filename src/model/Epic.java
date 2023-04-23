@@ -1,6 +1,5 @@
 package model;
 
-
 import service.Status;
 
 public class Epic extends Task {
@@ -24,6 +23,7 @@ public class Epic extends Task {
     public boolean equals(Object o) {
         return super.equals(o);
     }
+
     @Override
     public String toString() {
         return "Epic{" +

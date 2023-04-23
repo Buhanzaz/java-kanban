@@ -31,11 +31,11 @@ public class Manager {
     }
 
     /*Ввод задач*/
-    public void makeTask(Task task){
+    public void makeTask(Task task) {
         tasksHashMap.put(task.getId(), task);
     }
 
-    public void makeEpic(Epic epic){
+    public void makeEpic(Epic epic) {
         ArrayList<Subtask> sub = new ArrayList<>();
         HashMap<Epic, ArrayList<Subtask>> epicSubtask = new HashMap<>();
         epicSubtask.put(epic, sub);
@@ -55,10 +55,8 @@ public class Manager {
         }
     }
 
-
-
     /*Вывод всех задач*/
-    public void getAllTask(){
+    public void getAllTask() {
         if (tasksHashMap.size() != 0) {
             for (Task task : tasksHashMap.values()) {
                 System.out.println(task.toString());
@@ -86,19 +84,22 @@ public class Manager {
         }
     }
 
-    public void getEpicAndSubtask() {
+    /*Список подзадач для определенного Эпика*/
+    public void getEpicAndSubtask(int epicId) {
         for (Integer integer : epicAndSub.keySet()) {
-            System.out.println(integer);
-            System.out.println(epicAndSub.get(integer));
+            if (integer == epicId) {
+                System.out.println(integer);
+                System.out.println(epicAndSub.get(integer).toString());
+            }
         }
     }
 
     /*Получение по идентификатору.*/
-    public void getTaskById(int id){
+    public void getTaskById(int id) {
         System.out.println(tasksHashMap.get(id).toString());
     }
 
-    public void getEpicById(int id){
+    public void getEpicById(int id) {
         for (HashMap<Epic, ArrayList<Subtask>> value : epicAndSub.values()) {
             for (Epic epic : value.keySet()) {
                 if (epic.getId() == id) {
@@ -147,9 +148,9 @@ public class Manager {
     }
 
     /*Обновление задачи*/
-    public void updateTask(Task task){
+    public void updateTask(Task task) {
         for (Task tasks : tasksHashMap.values()) {
-            if(task.equals(tasks)) {
+            if (task.equals(tasks)) {
                 int id = tasks.getId();
                 task.setId(id);
                 tasksHashMap.put(id, task);
@@ -158,7 +159,7 @@ public class Manager {
         }
     }
 
-    public void updateEpic(Epic epic){
+    public void updateEpic(Epic epic) {
         ArrayList<Subtask> sub = new ArrayList<>();
         HashMap<Epic, ArrayList<Subtask>> epics = new HashMap<>();
         for (HashMap<Epic, ArrayList<Subtask>> value : epicAndSub.values()) {
@@ -176,19 +177,48 @@ public class Manager {
     }
 
     public void updateSubtask(Subtask subtask) {
+        for (Integer integer : epicAndSub.keySet()) {
+            if (subtask.getEpicId() == integer) {
+                for (HashMap<Epic, ArrayList<Subtask>> value : epicAndSub.values()) {
+                    for (Epic epic : value.keySet()) {
+                        if (epic.getEpicId() == subtask.getEpicId()) {
+                            for (ArrayList<Subtask> subtasks : value.values()) {
+                                subtasks.remove(subtask.getId());
+                                subtasks.add(subtask.getId(), subtask);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        getStatus(subtask.getEpicId());
+    }
+
+    public void getStatus(int epicId) {
         for (HashMap<Epic, ArrayList<Subtask>> value : epicAndSub.values()) {
-            for (ArrayList<Subtask> subtasks : value.values()) {
-                for (Subtask subtask1 : subtasks) {
-                    if (subtask1.equals(subtask)) {
-                        subtasks.remove(subtask1);
-                        subtasks.add(subtask.getId(), subtask);
+            for (Epic epic : value.keySet()) {
+                if (epic.getId() == epicId) {
+                    for (ArrayList<Subtask> subtasks : value.values()) {
+                        int countDone = 0;
+                        int countInProgress = 0;
+                        for (Subtask subtask : subtasks) {
+                            if (subtask.getStatus() == Status.DONE) {
+                                countDone++;
+                                if (countDone == subtasks.size()) {
+                                    epic.setStatus(Status.DONE);
+                                    break;
+                                }
+                            }
+                            if (subtask.getStatus() == Status.IN_PROGRESS) {
+                                countInProgress++;
+                            }
+                            if (countInProgress > 0 || countDone > 0) {
+                                epic.setStatus(Status.IN_PROGRESS);
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
-
-
-
-
