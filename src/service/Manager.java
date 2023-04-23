@@ -9,17 +9,27 @@ import java.util.HashMap;
 public class Manager {
     private int id = 1;
 
-    public Manager() {
-        this.tasksHashMap = new HashMap<>();
-    }
+
 
     HashMap<Integer, Task> tasksHashMap;
-    HashMap<Integer, HashMap<Epic, Subtask>> epicHashMap = new HashMap<>();
+    HashMap<Epic, Subtask> epicHashMap;
 
+    public Manager() {
+        this.tasksHashMap = new HashMap<>();
+        this.epicHashMap = new HashMap<>();
+    }
+
+    /*Ввод задач*/
     public void makeTask(Task task){
         task.setId(id++);
         task.setStatus(Status.NEW);
         tasksHashMap.put(task.getId(), task);
+    }
+
+    public void makeEpic(Epic epic){
+        epic.setId(id++);
+        epic.setStatus(Status.NEW);
+        epicHashMap.put(epic, null);
     }
 
     /*Вывод всех задач*/
@@ -32,37 +42,45 @@ public class Manager {
             System.out.println("Нет задач");
         }
     }
-/*
-    *//*Получение по идентификатору.*//*
-    public void getById(int id){
-        Task task = tasksList.get(id);
-        String string = task.toString();
-        System.out.println(string);
+
+    public void getAllEpic(){
+        if (epicHashMap.size() != 0) {
+            for (Epic epic : epicHashMap.keySet()) {
+                System.out.println(epic.toString());
+            }
+        } else {
+            System.out.println("Нет задач");
+        }
     }
 
-    *//*Удаление всех задач*//*
-    public void deleteAll() {
-        tasksList.clear();
+    /*Получение по идентификатору.*/
+    public void getTaskById(int id){
+        System.out.println(tasksHashMap.get(id).toString());
+    }
+
+    /*Удаление всех задач*/
+    public void deleteAllTask() {
+        tasksHashMap.clear();
     }
 
 
-    *//*Удаление по идентификатору*//*
-    public void removeById(int id) {
-        tasksList.remove(id);
+    /*Удаление по идентификатору*/
+    public void removeTaskById(int id) {
+        tasksHashMap.remove(id);
     }
 
-    *//*Обновление задачи*//*
+    /*Обновление задачи*/
     public void updateTask(Task task){
-        for (Task tasks : tasksList) {
+        for (Task tasks : tasksHashMap.values()) {
             if(task.equals(tasks)) {
                 //менять ли у обнавленной задачи id на id удаленной задачи???
-                int id = tasks.id;
-                removeById(tasks.id);
-                tasksList.add(id, task);
-                task.id = id;
+                int id = tasks.getId();
+                removeTaskById(tasks.getId());
+                tasksHashMap.put(id, task);
+                task.setId(id);
                 break;
             }
         }
-    }*/
+    }
 
 }
