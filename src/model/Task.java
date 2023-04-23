@@ -9,9 +9,11 @@ public class Task {
     private int id;
     private Status status;
 
-    public Task(String name, String description) {
+    public Task(String name, String description, int id, Status status) {
         this.name = name;
         this.description = description;
+        this.id = id;
+        this.status = status;
     }
 
     public int getId() {
@@ -30,12 +32,29 @@ public class Task {
         this.status = status;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return false;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return  Objects.equals(name, task.name);
+        return id == task.id;
     }
 
     @Override
