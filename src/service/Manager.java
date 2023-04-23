@@ -7,30 +7,32 @@ import model.Task;
 import java.util.HashMap;
 
 public class Manager {
-    /*Попробовать реализацию через одну коллекцию
-    Или сделать этот класс абстрактным и от него наследовать остальные для создания конструктора */
-    private int id = 0;
+    private int id = 1;
 
-    HashMap<Integer, Task> taskHashMap;
+    public Manager() {
+        this.tasksHashMap = new HashMap<>();
+    }
+
+    HashMap<Integer, Task> tasksHashMap;
     HashMap<Integer, HashMap<Epic, Subtask>> epicHashMap = new HashMap<>();
 
     public void makeTask(Task task){
         task.setId(id++);
         task.setStatus(Status.NEW);
-        taskHashMap.put(task.getId(), task);
+        tasksHashMap.put(task.getId(), task);
     }
 
     /*Вывод всех задач*/
-    /*public void getAllObject(){
-        if (tasksList.size() != 0) {
-            for (Task task : tasksList) {
+    public void getAllTask(){
+        if (tasksHashMap.size() != 0) {
+            for (Task task : tasksHashMap.values()) {
                 System.out.println(task.toString());
             }
         } else {
             System.out.println("Нет задач");
         }
     }
-
+/*
     *//*Получение по идентификатору.*//*
     public void getById(int id){
         Task task = tasksList.get(id);
