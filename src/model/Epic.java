@@ -2,26 +2,17 @@ package model;
 
 import service.Status;
 
-public class Epic extends Task {
+import java.util.ArrayList;
 
-    private int epicId;
-
-    public int getEpicId() {
-        return epicId;
-    }
-
-    public void setEpicId(int epicId) {
-        this.epicId = epicId;
-    }
+public class Epic extends AbstractTask{
+    protected ArrayList<Integer> subtaskIds = new ArrayList<>();
 
     public Epic(String name, String description, int id, Status status) {
         super(name, description, id, status);
-        this.epicId = id;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
+    public Epic(String name, String description) {
+        super(name, description);
     }
 
     @Override
