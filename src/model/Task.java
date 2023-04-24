@@ -2,7 +2,7 @@ package model;
 
 import service.Status;
 
-public class Task extends AbstractTask{
+public class Task extends AbstractTask {
     public Task(String name, String description, int id, Status status) {
         super(name, description, id, status);
     }
@@ -11,13 +11,12 @@ public class Task extends AbstractTask{
         super(name, description);
     }
 
-    @Override
     public String toString() {
         return "Task{" +
                 "name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
                 ", status='" + getStatus() + '\'' +
-                '}';
+                '}' + '\n';
     }
 }

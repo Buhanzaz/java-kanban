@@ -3,200 +3,134 @@ package service;
 import model.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Manager {
+    Repository repository = new Repository();
     private int id = 1;
 
-    /*Ввод задач*/
-    public void makeTask(Task task) {
-        tasksHashMap.put(task.getId(), task);
+    /*Create*/
+    public int createTask(Task task) {
+        task.setId(id++);
+        repository.tasksHashMap.put(task.getId(), task);
+        return task.getId();
     }
 
-    public void makeEpic(Epic epic) {
-        ArrayList<Subtask> sub = new ArrayList<>();
-        HashMap<Epic, ArrayList<Subtask>> epicSubtask = new HashMap<>();
-        epicSubtask.put(epic, sub);
-        epicAndSub.put(epic.getId(), epicSubtask);
+    public int createEpic(Epic epic) {
+        epic.setId(id++);
+        repository.epicHashMap.put(epic.getId(), epic);
+        return epic.getId();
     }
 
-    // Попробовать убрать проверку id
-    public void makeSubtask(Subtask subtask) {
-        for (HashMap<Epic, ArrayList<Subtask>> value : epicAndSub.values()) {
-            for (Epic epic : value.keySet()) {
-                if (epic.getId() == subtask.getEpicId()) {
-                    for (ArrayList<Subtask> subtasks : value.values()) {
-                        subtasks.add(subtask);
-                    }
-                }
-            }
-        }
+    public int createSubtask(Subtask subtask) {
+        subtask.setId(id++);
+        replaceSubtaskAndReturnEpic(subtask).setSubtaskId(subtask.getId());
+        return subtask.getId();
     }
 
-    /*Вывод всех задач*/
-    public void getAllTask() {
-        if (tasksHashMap.size() != 0) {
-            for (Task task : tasksHashMap.values()) {
-                System.out.println(task.toString());
-            }
-        } else {
-            System.out.println("Нет задач");
-        }
-    }
-
-    public void getAllEpic() {
-        for (HashMap<Epic, ArrayList<Subtask>> epicMap : epicAndSub.values()) {
-            for (Epic epic : epicMap.keySet()) {
-                System.out.println(epic.toString());
-            }
-        }
-    }
-
-    public void getAllSubtask() {
-        for (HashMap<Epic, ArrayList<Subtask>> value : epicAndSub.values()) {
-            for (ArrayList<Subtask> subtasks : value.values()) {
-                if (subtasks.size() != 0) {
-                    System.out.println(subtasks.toString());
-                }
-            }
-        }
-    }
-
-    /*Список подзадач для определенного Эпика*/
-    public void getEpicAndSubtask(int epicId) {
-        for (Integer integer : epicAndSub.keySet()) {
-            if (integer == epicId) {
-                System.out.println(integer);
-                System.out.println(epicAndSub.get(integer).toString());
-            }
-        }
-    }
-
-    /*Получение по идентификатору.*/
-    public void getTaskById(int id) {
-        System.out.println(tasksHashMap.get(id).toString());
-    }
-
-    public void getEpicById(int id) {
-        for (HashMap<Epic, ArrayList<Subtask>> value : epicAndSub.values()) {
-            for (Epic epic : value.keySet()) {
-                if (epic.getId() == id) {
-                    System.out.println(epic.toString());
-                }
-            }
-        }
-    }
-
-    /*Удаление всех задач*/
-    public void deleteAllTask() {
-        tasksHashMap.clear();
-    }
-
-    public void deleteAllEpic() {
-        epicAndSub.clear();
-    }
-
-    public void deleteAllSubtask() {
-        for (HashMap<Epic, ArrayList<Subtask>> value : epicAndSub.values()) {
-            for (ArrayList<Subtask> subtasks : value.values()) {
-                subtasks.clear();
-            }
-        }
-    }
-
-    /*Удаление по идентификатору*/
-    public void removeTaskById(int id) {
-        tasksHashMap.remove(id);
-    }
-
-    public void removeEpicById(int id) {
-        epicAndSub.remove(id);
-    }
-
-    public void removeSubtaskById(int idEpic, int id) {
-        for (HashMap<Epic, ArrayList<Subtask>> value : epicAndSub.values()) {
-            for (Epic epic : value.keySet()) {
-                if (epic.getId() == idEpic) {
-                    for (ArrayList<Subtask> subtasks : value.values()) {
-                        subtasks.remove(id);
-                    }
-                }
-            }
-        }
-    }
-
-    /*Обновление задачи*/
+    /*Update*/
     public void updateTask(Task task) {
-        for (Task tasks : tasksHashMap.values()) {
-            if (task.equals(tasks)) {
-                int id = tasks.getId();
-                task.setId(id);
-                tasksHashMap.put(id, task);
-                break;
-            }
-        }
+        repository.tasksHashMap.put(task.getId(), task);
     }
 
     public void updateEpic(Epic epic) {
-        ArrayList<Subtask> sub = new ArrayList<>();
-        HashMap<Epic, ArrayList<Subtask>> epics = new HashMap<>();
-        for (HashMap<Epic, ArrayList<Subtask>> value : epicAndSub.values()) {
-            for (Epic epicKey : value.keySet()) {
-                if (epic.equals(epicKey)) {
-                    for (ArrayList<Subtask> subtasks : value.values()) {
-                        sub.addAll(subtasks);
-                    }
-                    break;
-                }
-            }
+        ArrayList<Integer> subtaskId = repository.epicHashMap.get(epic.getId()).getSubtaskId();
+        repository.epicHashMap.put(epic.getId(), epic);
+        for (Integer id : subtaskId) {
+            repository.epicHashMap.get(epic.getId()).setSubtaskId(id);
         }
-        epics.put(epic, sub);
-        epicAndSub.put(epic.getId(), epics);
     }
 
     public void updateSubtask(Subtask subtask) {
-        for (Integer integer : epicAndSub.keySet()) {
-            if (subtask.getEpicId() == integer) {
-                for (HashMap<Epic, ArrayList<Subtask>> value : epicAndSub.values()) {
-                    for (Epic epic : value.keySet()) {
-                        if (epic.getEpicId() == subtask.getEpicId()) {
-                            for (ArrayList<Subtask> subtasks : value.values()) {
-                                subtasks.remove(subtask.getId());
-                                subtasks.add(subtask.getId(), subtask);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        getStatus(subtask.getEpicId());
+        updateStatus(replaceSubtaskAndReturnEpic(subtask));
     }
 
-    public void getStatus(int epicId) {
-        for (HashMap<Epic, ArrayList<Subtask>> value : epicAndSub.values()) {
-            for (Epic epic : value.keySet()) {
-                if (epic.getId() == epicId) {
-                    for (ArrayList<Subtask> subtasks : value.values()) {
-                        int countDone = 0;
-                        int countInProgress = 0;
-                        for (Subtask subtask : subtasks) {
-                            if (subtask.getStatus() == Status.DONE) {
-                                countDone++;
-                                if (countDone == subtasks.size()) {
-                                    epic.setStatus(Status.DONE);
-                                    break;
-                                }
-                            }
-                            if (subtask.getStatus() == Status.IN_PROGRESS) {
-                                countInProgress++;
-                            }
-                            if (countInProgress > 0 || countDone > 0) {
-                                epic.setStatus(Status.IN_PROGRESS);
-                            }
-                        }
-                    }
+    /*Epic status update*/
+    private void updateStatus(Epic epic) {
+        int countDone = 0;
+        int countInProgress = 0;
+
+        for (Integer subtaskId : epic.getSubtaskId()) {
+            Subtask subItem = repository.subtaskHashMap.get(subtaskId);
+            if (subItem.getStatus() == Status.DONE) {
+                countDone++;
+                if (countDone == epic.getSubtaskId().size()) {
+                    epic.setStatus(Status.DONE);
+                    break;
                 }
             }
+            if (subItem.getStatus() == Status.IN_PROGRESS) {
+                countInProgress++;
+            }
+            if (countInProgress > 0 || countDone > 0) {
+                epic.setStatus(Status.IN_PROGRESS);
+            }
+
         }
+    }
+
+    private Epic replaceSubtaskAndReturnEpic(Subtask subtask) {
+        repository.subtaskHashMap.put(subtask.getId(), subtask);
+        return repository.epicHashMap.get(subtask.getEpicId());
+    }
+
+    /*Show Tasks*/
+    public String showTasks() {
+        return repository.tasksHashMap.toString();
+    }
+
+    public String showEpics() {
+        return repository.epicHashMap.toString();
+    }
+
+    public String showSubtasks() {
+        return repository.subtaskHashMap.toString();
+    }
+
+    /*Show by ID*/
+    public String showTaskById(int id) {
+        return repository.tasksHashMap.get(id).toString();
+    }
+
+    public String showEpicById(int id) {
+        return repository.epicHashMap.get(id).toString();
+    }
+
+    public String showSubtaskById(int id) {
+        return repository.subtaskHashMap.get(id).toString();
+    }
+
+    /*Show Tasks if Epic*/
+    public String showSubtaskInEpic(int epicId) {
+        ArrayList<Subtask> subtasks = new ArrayList<>();
+        for (Integer subtaskId : repository.epicHashMap.get(epicId).getSubtaskId()) {
+            subtasks.add(repository.subtaskHashMap.get(subtaskId));
+        }
+        return subtasks.toString();
+    }
+
+    /*Delete all Task*/
+    public void deleteTasks() {
+        repository.tasksHashMap.clear();
+    }
+
+    public void deleteEpics() {
+        repository.epicHashMap.clear();
+    }
+
+    public void deleteSubtask() {
+        repository.subtaskHashMap.clear();
+    }
+
+    /*Remove by ID*/
+    public void removeTaskById(int id) {
+        repository.tasksHashMap.remove(id);
+    }
+
+    public void removeEpicById(int id) {
+        repository.epicHashMap.remove(id);
+    }
+
+    public void removeSubtaskById(int id) {
+        repository.subtaskHashMap.remove(id);
     }
 }

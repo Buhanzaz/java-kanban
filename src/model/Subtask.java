@@ -2,19 +2,23 @@ package model;
 
 import service.Status;
 
-import java.util.Objects;
-
-public class Subtask extends AbstractTask{
+public class Subtask extends AbstractTask {
     protected int epicId;
-    public Subtask(String name, String description, int id, Status status) {
+
+    public Subtask(int epicId, String name, String description, int id, Status status) {
         super(name, description, id, status);
+        this.epicId = epicId;
     }
 
-    public Subtask(String name, String description) {
+    public Subtask(int epicId, String name, String description) {
         super(name, description);
+        this.epicId = epicId;
     }
 
-    @Override
+    public int getEpicId() {
+        return epicId;
+    }
+
     public String toString() {
         return "Subtask{" +
                 "epicId=" + epicId +
@@ -22,6 +26,6 @@ public class Subtask extends AbstractTask{
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
                 ", status='" + getStatus() + '\'' +
-                '}';
+                '}' + '\n';
     }
 }
