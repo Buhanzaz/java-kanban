@@ -6,29 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Manager {
-    private int taskId = 0;
-    private int epicId = 0;
-    private int subtaskId = 0;
-
-    HashMap<Integer, Task> tasksHashMap;
-    HashMap<Integer, HashMap<Epic, ArrayList<Subtask>>> epicAndSub;
-
-    public Manager() {
-        this.tasksHashMap = new HashMap<>();
-        this.epicAndSub = new HashMap<>();
-    }
-
-    public int taskIdGenerator() {
-        return taskId++;
-    }
-
-    public int epicIdGenerator() {
-        return epicId++;
-    }
-
-    public int subtaskIdGenerator() {
-        return subtaskId++;
-    }
+    private int id = 1;
 
     /*Ввод задач*/
     public void makeTask(Task task) {
