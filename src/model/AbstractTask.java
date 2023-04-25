@@ -2,6 +2,8 @@ package model;
 
 import service.Status;
 
+import java.util.Objects;
+
 abstract class AbstractTask {
     protected String name;
     protected String description;
@@ -27,12 +29,24 @@ abstract class AbstractTask {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Status getStatus() {
@@ -43,7 +57,16 @@ abstract class AbstractTask {
         this.status = status;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return false;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractTask that = (AbstractTask) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

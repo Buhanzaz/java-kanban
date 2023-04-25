@@ -27,7 +27,7 @@ public class Main {
         System.out.println(manager.showEpics() + '\n');
         System.out.println(manager.showSubtasks() + '\n');
 
-        manager.updateTask(new Task("Задача - 1", "Тест задачи - 1", testTask1, Status.IN_PROGRESS));
+        manager.updateTask(new Task("Задача - 1", "Тест задачи - 1", testEpic1, Status.IN_PROGRESS));
         manager.updateTask(new Task("Задача - 2", "Тест задачи - 2", testTask2, Status.DONE));
 
         System.out.println(manager.showTaskById(testTask1) + '\n');
@@ -43,13 +43,11 @@ public class Main {
         manager.updateSubtask(new Subtask(testEpic1, "Подзадача - 2",
                 "Тест подзадачи - 2", testSubtask2, Status.IN_PROGRESS));
 
-        System.out.println(manager.showEpicById(testEpic1));
         System.out.println(manager.showSubtaskInEpic(testEpic1) + '\n');
 
         manager.updateSubtask(new Subtask(testEpic2, "Подзадача - 3",
                 "Тест подзадачи - 3", testSubtask3, Status.DONE));
 
-        System.out.println(manager.showEpicById(testEpic2));
         System.out.println(manager.showSubtaskInEpic(testEpic2) + '\n');
 
         manager.removeTaskById(testTask1);
@@ -59,5 +57,6 @@ public class Main {
         manager.removeEpicById(testEpic1);
 
         System.out.println(manager.showEpics() + '\n');
+
     }
 }
