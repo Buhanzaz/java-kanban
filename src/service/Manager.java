@@ -26,19 +26,11 @@ public class Manager {
         int epicId = subtask.getEpicId();
 
         if (checkSizeMapEpics()) {
-            for (Integer epicIdInMap : repository.getEpicHashMap().keySet()) {
-                if (epicId == epicIdInMap) {
-                    subtask.setId(id++);
-                    repository.getSubtaskHashMap().put(subtask.getId(), subtask);
-                    repository.getEpicHashMap().get(epicId)
-                            .setSubtasksIdAndStatus(subtask.getId(), subtask.getStatus());
-                    epicUpdateStatus(epicId);
-                    return subtask.getId();
-                }
-            }
-            System.out.println("Ошибка! Нет Эпика с данным id!\n");
-        } else {
-            System.out.println("Ошибка! Нет сложных задач\n");
+            subtask.setId(id++);
+            repository.getSubtaskHashMap().put(subtask.getId(), subtask);
+            repository.getEpicHashMap().get(epicId)
+                    .setSubtasksIdAndStatus(subtask.getId(), subtask.getStatus());
+            epicUpdateStatus(epicId);
         }
         return subtask.getId();
     }
@@ -46,31 +38,19 @@ public class Manager {
     /*Update*/
     public void updateTask(Task task) {
         int taskId = task.getId();
+
         if (checkSizeMapTask()) {
-            for (Integer taskIdInMap : repository.getTasksHashMap().keySet()) {
-                if (taskId == taskIdInMap) {
-                    repository.getTasksHashMap().put(taskId, task);
-                    return;
-                }
-            }
-            System.out.println("Ошибка обновления задачи! Непрвильный id!\n");
-        } else {
-            System.out.println("Невозможно обнавить задачу, список задач пуст!\n");
+            repository.getTasksHashMap().put(taskId, task);
         }
     }
 
     public void updateEpic(Epic epic) {
+        int epicId = epic.getId();
+        Epic epicInMap = repository.getEpicHashMap().get(epicId);
+
         if (checkSizeMapEpics()) {
-            for (Epic epicInMap : repository.getEpicHashMap().values()) {
-                if (epic.equals(epicInMap)) {
-                    epicInMap.setName(epic.getName());
-                    epic.setDescription(epic.getDescription());
-                    return;
-                }
-            }
-            System.out.println("Ошибка обновления Эпика!\n");
-        } else {
-            System.out.println("Невозможно обнавить Эпическую задачу, список Эпических задач пуст!\n");
+            epicInMap.setName(epic.getName());
+            epicInMap.setDescription(epic.getDescription());
         }
     }
 
@@ -78,23 +58,11 @@ public class Manager {
         int subtaskId = subtask.getId();
         int epicId = subtask.getEpicId();
 
-        if (checkSizeMapEpics()) {
-            if (checkSizeMapSubtask()) {
-                for (Subtask subtaskInMap : repository.getSubtaskHashMap().values()) {
-                    if (subtask.equals(subtaskInMap)) {
-                        repository.getSubtaskHashMap().put(subtaskId, subtask);
-                        repository.getEpicHashMap().get(epicId)
-                                .setSubtasksIdAndStatus(subtaskId, subtask.getStatus());
-                        epicUpdateStatus(epicId);
-                        return;
-                    }
-                }
-                System.out.println("Ошибка обновления подзадачи!\n");
-            } else {
-                System.out.println("Невозможно обнавить подзадачу, список подзадач пуст!\n");
-            }
-        } else {
-            System.out.println("Ошибка! Нет сложных задач\n");
+        if (checkSizeMapSubtask()) {
+            repository.getSubtaskHashMap().put(subtaskId, subtask);
+            repository.getEpicHashMap().get(epicId)
+                    .setSubtasksIdAndStatus(subtaskId, subtask.getStatus());
+            epicUpdateStatus(epicId);
         }
     }
 
@@ -128,48 +96,33 @@ public class Manager {
     }
 
     /*Show Tasks*/
-    public String showTasks() {
-        return repository.getTasksHashMap().toString();
+    public HashMap<Integer, Task> showTasks() {
+        return repository.getTasksHashMap();
     }
 
-    public String showEpics() {
-        return repository.getEpicHashMap().toString();
+    public HashMap<Integer, Epic> showEpics() {
+        return repository.getEpicHashMap();
     }
 
-    public String showSubtasks() {
-        return repository.getSubtaskHashMap().toString();
+    public HashMap<Integer, Subtask> showSubtasks() {
+        return repository.getSubtaskHashMap();
     }
 
     /*Show by ID*/
-    public String showTaskById(int taskId) {
-        for (Integer taskIdInMap : repository.getTasksHashMap().keySet()) {
-            if (taskIdInMap == taskId) {
-                return repository.getTasksHashMap().get(taskId).toString();
-            }
-        }
-        return "Ошибка! Задачи с такой id не существует\n";
+    public Task showTaskById(int taskId) {
+        return repository.getTasksHashMap().get(taskId);
     }
 
-    public String showEpicById(int epicId) {
-        for (Integer epicIdInMap : repository.getEpicHashMap().keySet()) {
-            if (epicIdInMap == epicId) {
-                return repository.getEpicHashMap().get(epicId).toString();
-            }
-        }
-        return "Ошибка! Эпической задачи с такой id не существует\n";
+    public Epic showEpicById(int epicId) {
+        return repository.getEpicHashMap().get(epicId);
     }
 
-    public String showSubtaskById(int subtaskId) {
-        for (Integer subtaskIdInMap : repository.getSubtaskHashMap().keySet()) {
-            if (subtaskIdInMap == subtaskId) {
-                return repository.getSubtaskHashMap().get(subtaskId).toString();
-            }
-        }
-        return "Ошибка! Подзадачи с такой id не существует\n";
+    public Subtask showSubtaskById(int subtaskId) {
+        return repository.getSubtaskHashMap().get(subtaskId);
     }
 
     /*Show Tasks if Epic*/
-    public String showSubtaskInEpic(int epicId) {
+    public HashMap<Epic, HashMap<Integer, Subtask>> showSubtaskInEpic(int epicId) {
         HashMap<Epic, HashMap<Integer, Subtask>> epicAndSubtask = new HashMap<>();
         HashMap<Integer, Subtask> subtask = new HashMap<>();
         HashMap<Integer, Status> subtasksIdAndStatus = repository.getEpicHashMap()
@@ -180,7 +133,7 @@ public class Manager {
             subtask.put(subtaskId, repository.getSubtaskHashMap().get(subtaskId));
         }
         epicAndSubtask.put(epic, subtask);
-        return epicAndSubtask.toString();
+        return epicAndSubtask;
     }
 
     /*Delete all Task*/
@@ -229,19 +182,18 @@ public class Manager {
                 epicUpdateStatus(epicId);
             }
         }
-
     }
 
     /*Check size Map*/
     private boolean checkSizeMapTask() {
-        return repository.getTasksHashMap().size() != 0;
+        return !repository.getTasksHashMap().isEmpty();
     }
 
     private boolean checkSizeMapEpics() {
-        return repository.getEpicHashMap().size() != 0;
+        return !repository.getEpicHashMap().isEmpty();
     }
 
     private boolean checkSizeMapSubtask() {
-        return repository.getSubtaskHashMap().size() != 0;
+        return !repository.getSubtaskHashMap().isEmpty();
     }
 }
