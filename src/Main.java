@@ -26,8 +26,8 @@ public class Main {
         System.out.println(manager.showTasks().toString() + '\n');
         System.out.println(manager.showEpics().toString() + '\n');
         System.out.println(manager.showSubtasks().toString() + '\n');
-
-        manager.updateTask(new Task("Задача - 1", "Тест задачи - 1", testEpic1, Status.IN_PROGRESS));
+// Статус Задачи не меняется???+
+        manager.updateTask(new Task("Задача - 1", "Тест задачи - 3", testTask1, Status.IN_PROGRESS));
         manager.updateTask(new Task("Задача - 2", "Тест задачи - 2", testTask2, Status.DONE));
 
         System.out.println(manager.showTaskById(testTask1).toString() + '\n');

@@ -1,11 +1,9 @@
 package model;
 
-import service.Status;
-
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Epic extends AbstractTask {
-    protected HashMap<Integer, Status> subtasksIdAndStatus = new HashMap<>();
+    protected ArrayList<Integer> subtasksId = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description);
@@ -16,12 +14,17 @@ public class Epic extends AbstractTask {
         this.id = id;
     }
 
-    public void setSubtasksIdAndStatus(int id, Status status) {
-        subtasksIdAndStatus.put(id, status);
+    public void addSubtasksId(int id) {
+        subtasksId.add(id);
     }
 
-    public HashMap<Integer, Status> getSubtasksIdAndStatus() {
-        return subtasksIdAndStatus;
+    public ArrayList<Integer> getSubtasksId() {
+        return subtasksId;
+    }
+
+    public void removeSubtaskId(int id) {
+        Integer subId = subtasksId.indexOf(id);
+        subtasksId.remove(subId);
     }
 
     public String toString() {
