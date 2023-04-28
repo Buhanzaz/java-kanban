@@ -3,11 +3,7 @@ package service;
 import model.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-/*Привет вроде исправил все замечаия, а так же по совету моего наставника в классе Epic я поменял HashMap
- * где хранились ранее <subtaskId, Status> на ArrayList хронящий в себе subtaskId. Хотелось бы узнать прошлый вариант
- * был лучше или по факту разницы нет?*/
 public class Manager {
     private final Repository repository = new Repository();
     private int id = 1;
@@ -25,16 +21,16 @@ public class Manager {
         return epic.getId();
     }
 
-    // Нужно сделать проверку на то есть ли эпик или нет
     public int createSubtask(Subtask subtask) {
         int subtaskId;
         int epicId = subtask.getEpicId();
+        Epic epic = repository.getEpicHashMap().get(epicId);
 
-        if (checkSizeMapEpics()) {
+        if (epic != null) {
             subtask.setId(id++);
             subtaskId = subtask.getId();
             repository.getSubtaskHashMap().put(subtaskId, subtask);
-            repository.getEpicHashMap().get(epicId).addSubtasksId(subtaskId);
+            epic.addSubtasksId(subtaskId);
             epicUpdateStatus(epicId);
         }
         return subtask.getId();
@@ -43,8 +39,9 @@ public class Manager {
     /*Update*/
     public void updateTask(Task task) {
         int taskId = task.getId();
+        Task taskInMap = repository.getTasksHashMap().get(taskId);
 
-        if (checkSizeMapTask()) {
+        if (taskInMap != null) {
             repository.getTasksHashMap().put(taskId, task);
         }
     }
@@ -53,7 +50,7 @@ public class Manager {
         int epicId = epic.getId();
         Epic epicInMap = repository.getEpicHashMap().get(epicId);
 
-        if (checkSizeMapEpics()) {
+        if (epicInMap != null) {
             epicInMap.setName(epic.getName());
             epicInMap.setDescription(epic.getDescription());
         }
@@ -62,8 +59,9 @@ public class Manager {
     public void updateSubtask(Subtask subtask) {
         int subtaskId = subtask.getId();
         int epicId = subtask.getEpicId();
+        Subtask subtaskInMap = repository.getSubtaskHashMap().get(subtaskId);
 
-        if (checkSizeMapSubtask()) {
+        if (subtaskInMap != null) {
             repository.getSubtaskHashMap().put(subtaskId, subtask);
             epicUpdateStatus(epicId);
         }
@@ -101,43 +99,40 @@ public class Manager {
     }
 
     /*Show Tasks*/
-    public HashMap<Integer, Task> showTasks() {
-        return repository.getTasksHashMap();
+    public ArrayList<Task> getTasks() {
+        return new ArrayList<>(repository.getTasksHashMap().values());
     }
 
-    public HashMap<Integer, Epic> showEpics() {
-        return repository.getEpicHashMap();
+    public ArrayList<Epic> getEpics() {
+        return new ArrayList<>(repository.getEpicHashMap().values());
     }
 
-    public HashMap<Integer, Subtask> showSubtasks() {
-        return repository.getSubtaskHashMap();
+    public ArrayList<Subtask> getSubtasks() {
+        return new ArrayList<>(repository.getSubtaskHashMap().values());
     }
 
     /*Show by ID*/
-    public Task showTaskById(int taskId) {
+    public Task getTaskById(int taskId) {
         return repository.getTasksHashMap().get(taskId);
     }
 
-    public Epic showEpicById(int epicId) {
+    public Epic getEpicById(int epicId) {
         return repository.getEpicHashMap().get(epicId);
     }
 
-    public Subtask showSubtaskById(int subtaskId) {
+    public Subtask getSubtaskById(int subtaskId) {
         return repository.getSubtaskHashMap().get(subtaskId);
     }
 
     /*Show Tasks if Epic*/
-    public HashMap<Epic, HashMap<Integer, Subtask>> showSubtaskInEpic(int epicId) {
-        HashMap<Epic, HashMap<Integer, Subtask>> epicAndSubtask = new HashMap<>();
-        HashMap<Integer, Subtask> subtask = new HashMap<>();
+    public ArrayList<Subtask> getSubtasksInEpic(int epicId) {
+        ArrayList<Subtask> subtask = new ArrayList<>();
         ArrayList<Integer> subtasksId = repository.getEpicHashMap().get(epicId).getSubtasksId();
-        Epic epic = repository.getEpicHashMap().get(epicId);
 
         for (Integer id : subtasksId) {
-            subtask.put(id, repository.getSubtaskHashMap().get(id));
+            subtask.add(repository.getSubtaskHashMap().get(id));
         }
-        epicAndSubtask.put(epic, subtask);
-        return epicAndSubtask;
+        return subtask;
     }
 
     /*Delete all Task*/
@@ -152,11 +147,9 @@ public class Manager {
 
     public void deleteSubtask() {
         repository.getSubtaskHashMap().clear();
-        if (!checkSizeMapEpics()) {
-            for (Epic epic : repository.getEpicHashMap().values()) {
-                epic.getSubtasksId().clear();
-                epicUpdateStatus(epic.getId());
-            }
+        for (Epic epic : repository.getEpicHashMap().values()) {
+            epic.getSubtasksId().clear();
+            epicUpdateStatus(epic.getId());
         }
     }
 
@@ -182,18 +175,5 @@ public class Manager {
         if (epic != null) {
             epic.removeSubtaskId(subtaskId);
         }
-    }
-
-    /*Check size Map*/
-    private boolean checkSizeMapTask() {
-        return !repository.getTasksHashMap().isEmpty();
-    }
-
-    private boolean checkSizeMapEpics() {
-        return !repository.getEpicHashMap().isEmpty();
-    }
-
-    private boolean checkSizeMapSubtask() {
-        return !repository.getSubtaskHashMap().isEmpty();
     }
 }

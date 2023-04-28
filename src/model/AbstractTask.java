@@ -1,7 +1,5 @@
 package model;
 
-import service.Status;
-
 import java.util.Objects;
 
 abstract class AbstractTask {
