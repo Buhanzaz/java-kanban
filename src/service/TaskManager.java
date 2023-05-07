@@ -3,6 +3,7 @@ package service;
 import model.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
     /*Create*/
@@ -28,12 +29,15 @@ public interface TaskManager {
 
     ArrayList<Subtask> getSubtasks();
 
+
     /*Show by ID*/
     Task getTaskById(int taskId);
 
     Epic getEpicById(int epicId);
 
     Subtask getSubtaskById(int subtaskId);
+
+    ArrayList<Subtask> getSubtasksInEpic(int epicId);
 
 
     /*Delete all Task*/
@@ -42,7 +46,6 @@ public interface TaskManager {
     void deleteEpics();
 
     void deleteSubtask();
-
 
     /*Remove by ID*/
     void removeTaskById(int taskId);

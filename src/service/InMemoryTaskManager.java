@@ -1,15 +1,16 @@
 package service;
 
-import model.Epic;
-import model.Status;
-import model.Subtask;
-import model.Task;
+import model.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class InMemoryTaskManager implements TaskManager {
+public class InMemoryTaskManager implements TaskManager, HistoryManager {
+    protected static List<AbstractTask> viewTask = new ArrayList<>();
     private int id = 1;
     private final Repository repository = new Repository();
+    HistoryManager historyManager = Manager.getDefaultHistory();
+
 
     /*Create*/
     @Override
@@ -95,17 +96,24 @@ public class InMemoryTaskManager implements TaskManager {
     /*Show by ID*/
     @Override
     public Task getTaskById(int taskId) {
-        return repository.getTasksHashMap().get(taskId);
+        Task task = repository.getTasksHashMap().get(taskId);
+        historyManager.add(task);
+        return task;
+
     }
 
     @Override
     public Epic getEpicById(int epicId) {
-        return repository.getEpicHashMap().get(epicId);
+        Epic epic = repository.getEpicHashMap().get(epicId);
+        historyManager.add(epic);
+        return epic;
     }
 
     @Override
     public Subtask getSubtaskById(int subtaskId) {
-        return repository.getSubtaskHashMap().get(subtaskId);
+        Subtask subtask = repository.getSubtaskHashMap().get(subtaskId);
+        historyManager.add(subtask);
+        return subtask;
     }
 
     /*Delete all Task*/
@@ -196,5 +204,15 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             epic.setStatus(Status.NEW);
         }
+    }
+
+    @Override
+    public void add(AbstractTask Task) {
+        historyManager.add(Task);
+    }
+
+    @Override
+    public List<AbstractTask> getHistory() {
+        return historyManager.getHistory();
     }
 }

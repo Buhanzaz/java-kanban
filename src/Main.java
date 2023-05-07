@@ -1,62 +1,54 @@
 import model.Epic;
 import model.Subtask;
 import model.Task;
+import service.HistoryManager;
 import service.InMemoryTaskManager;
 import model.Status;
+import service.Manager;
+import service.TaskManager;
 
 public class Main {
     public static void main(String[] args) {
-        InMemoryTaskManager manager = new InMemoryTaskManager();
+        Manager manager = new Manager();
+        TaskManager taskManager = manager.getDefault();
+        HistoryManager historyManager = Manager.getDefaultHistory();
 
-        int testTask1 = manager.create(new Task("Задача - 1", "Тест задачи - 1"));
-        int testTask2 = manager.create(new Task("Задача - 2", "Тест задачи - 2"));
+        int task1 = taskManager.create(new Task("Task - 1", "Test - 1"));
+        int task2 = taskManager.create(new Task("Task - 2", "Test - 2"));
+        int task3 = taskManager.create(new Task("Task - 3", "Test - 3"));
+        int task4 = taskManager.create(new Task("Task - 4", "Test - 4"));
+        int task5 = taskManager.create(new Task("Task - 5", "Test - 5"));
 
-        int testEpic1 = manager.create(new Epic("Эпическая задача - 1",
-                "Тест эпической задачи - 1"));
-        int testSubtask1 = manager.create(new Subtask(testEpic1, "Подзадача - 1",
-                "Тест подзадачи - 1"));
-        int testSubtask2 = manager.create(new Subtask(testEpic1, "Подзадача - 2",
-                "Тест подзадачи - 2"));
+        for (int i = task1; i <= task5; i++) {
+            taskManager.getTaskById(i);
+        }
+        System.out.println(historyManager.getHistory().toString());
 
-        int testEpic2 = manager.create(new Epic("Эпическая задача - 2",
-                "Тест эпической задачи - 2"));
-        int testSubtask3 = manager.create(new Subtask(testEpic2, "Подзадача - 3",
-                "Тест подзадачи - 3"));
+        int epic1 = taskManager.create(new Epic("Epic - 1", "Test - 1"));
+        int epic2 = taskManager.create(new Epic("Epic - 2", "Test - 2"));
+        int epic3 = taskManager.create(new Epic("Epic - 3", "Test - 3"));
+        int epic4 = taskManager.create(new Epic("Epic - 4", "Test - 4"));
+        int epic5 = taskManager.create(new Epic("Epic - 5", "Test - 5"));
 
-        System.out.println(manager.getTasks().toString() + '\n');
-        System.out.println(manager.getEpics().toString() + '\n');
-        System.out.println(manager.getSubtasks().toString() + '\n');
-// Статус Задачи не меняется???+
-        manager.update(new Task("Задача - 1", "Тест задачи - 3", testTask1, Status.IN_PROGRESS));
-        manager.update(new Task("Задача - 2", "Тест задачи - 2", testTask2, Status.DONE));
+        for (int i = epic1; i <= epic5; i++) {
+            taskManager.getEpicById(i);
+        }
+        System.out.println(historyManager.getHistory().toString());
 
-        System.out.println(manager.getTaskById(testTask1).toString() + '\n');
-        System.out.println(manager.getTaskById(testTask2).toString() + '\n');
+        int subtask1 = taskManager.create(new Subtask(epic1, "Subtask - 1", "Test - 1"));
+        int subtask2 = taskManager.create(new Subtask(epic2, "Subtask - 2", "Test - 1"));
+        int subtask3 = taskManager.create(new Subtask(epic3, "Subtask - 3", "Test - 1"));
+        int subtask4 = taskManager.create(new Subtask(epic4, "Subtask - 4", "Test - 1"));
+        int subtask5 = taskManager.create(new Subtask(epic5, "Subtask - 5", "Test - 1"));
 
-        manager.update(new Epic("Эпическая задача - Изменено",
-                "Тест эпической задачи - Изменено", testEpic2));
+        for (int i = subtask1; i <= subtask5; i++) {
+            taskManager.getSubtaskById(i);
+        }
+        System.out.println(historyManager.getHistory().toString());
 
-        System.out.println(manager.getEpicById(testEpic2).toString() + '\n');
-
-        manager.update(new Subtask(testEpic1, "Подзадача - 1",
-                "Тест подзадачи - 1", testSubtask1, Status.DONE));
-        manager.update(new Subtask(testEpic1, "Подзадача - 2",
-                "Тест подзадачи - 2", testSubtask2, Status.IN_PROGRESS));
-
-        System.out.println(manager.getSubtasksInEpic(testEpic1).toString() + '\n');
-
-        manager.update(new Subtask(testEpic2, "Подзадача - 3",
-                "Тест подзадачи - 3", testSubtask3, Status.DONE));
-
-        System.out.println(manager.getSubtasksInEpic(testEpic2).toString() + '\n');
-
-        manager.removeTaskById(testTask1);
-
-        System.out.println(manager.getTasks().toString() + '\n');
-
-        manager.removeEpicById(testEpic1);
-
-        System.out.println(manager.getEpics().toString() + '\n');
-
+        taskManager.getSubtaskById(11);
+        System.out.println(historyManager.getHistory().toString());
     }
+
+
 }

@@ -2,7 +2,7 @@ package model;
 
 import java.util.Objects;
 
-abstract class AbstractTask {
+public abstract class AbstractTask {
     protected String name;
     protected String description;
     protected int id;
