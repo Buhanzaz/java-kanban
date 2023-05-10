@@ -3,13 +3,11 @@ package service;
 import model.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class InMemoryTaskManager implements TaskManager, HistoryManager {
-    protected static List<AbstractTask> viewTask = new ArrayList<>();
+public class InMemoryTaskManager implements TaskManager {
     private int id = 1;
     private final Repository repository = new Repository();
-    HistoryManager historyManager = Manager.getDefaultHistory();
+    private final HistoryManager historyManager = Manager.getDefaultHistory();
 
 
     /*Create*/
@@ -204,15 +202,5 @@ public class InMemoryTaskManager implements TaskManager, HistoryManager {
         } else {
             epic.setStatus(Status.NEW);
         }
-    }
-
-    @Override
-    public void add(AbstractTask Task) {
-        historyManager.add(Task);
-    }
-
-    @Override
-    public List<AbstractTask> getHistory() {
-        return historyManager.getHistory();
     }
 }

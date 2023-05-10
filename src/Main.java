@@ -1,16 +1,9 @@
-import model.Epic;
-import model.Subtask;
-import model.Task;
-import service.HistoryManager;
-import service.InMemoryTaskManager;
-import model.Status;
-import service.Manager;
-import service.TaskManager;
+import model.*;
+import service.*;
 
 public class Main {
     public static void main(String[] args) {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         HistoryManager historyManager = Manager.getDefaultHistory();
 
         int task1 = taskManager.create(new Task("Task - 1", "Test - 1"));
