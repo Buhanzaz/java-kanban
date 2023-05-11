@@ -2,26 +2,25 @@ package service;
 
 import model.AbstractTask;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    protected static List<AbstractTask> viewTask = new LinkedList<>();
+    private static final byte LAST_INDEX = 10;
+    private final LinkedList<AbstractTask> viewTask = new LinkedList<>();
 
     @Override
     public List<AbstractTask> getHistory() {
-        return viewTask;
+        return new ArrayList<>(viewTask);
     }
 
     @Override
     public void add(AbstractTask object) {
         if (object != null) {
-            if (viewTask.size() < LAST_INDEX) {
-                viewTask.add(object);
-
-            } else {
-                viewTask.add(object);
-                viewTask.remove(FIRST_INDEX);
+            viewTask.add(object);
+            if (viewTask.size() >= LAST_INDEX) {
+                viewTask.removeFirst();
             }
         }
     }

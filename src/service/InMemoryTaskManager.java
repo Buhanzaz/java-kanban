@@ -3,6 +3,7 @@ package service;
 import model.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id = 1;
@@ -202,5 +203,10 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             epic.setStatus(Status.NEW);
         }
+    }
+
+    @Override
+    public List<AbstractTask> getHistory() {
+        return historyManager.getHistory();
     }
 }
