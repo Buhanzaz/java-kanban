@@ -4,7 +4,6 @@ import service.*;
 public class Main {
     public static void main(String[] args) {
         TaskManager taskManager = Manager.getDefault();
-        HistoryManager historyManager = Manager.getDefaultHistory();
 
         int task1 = taskManager.create(new Task("Task - 1", "Test - 1"));
         int task2 = taskManager.create(new Task("Task - 2", "Test - 2"));
@@ -15,7 +14,7 @@ public class Main {
         for (int i = task1; i <= task5; i++) {
             taskManager.getTaskById(i);
         }
-        System.out.println(historyManager.getHistory().toString());
+        System.out.println(taskManager.getHistory().toString());
 
         int epic1 = taskManager.create(new Epic("Epic - 1", "Test - 1"));
         int epic2 = taskManager.create(new Epic("Epic - 2", "Test - 2"));
@@ -26,7 +25,7 @@ public class Main {
         for (int i = epic1; i <= epic5; i++) {
             taskManager.getEpicById(i);
         }
-        System.out.println(historyManager.getHistory().toString());
+        System.out.println(taskManager.getHistory().toString());
 
         int subtask1 = taskManager.create(new Subtask(epic1, "Subtask - 1", "Test - 1"));
         int subtask2 = taskManager.create(new Subtask(epic2, "Subtask - 2", "Test - 1"));
@@ -37,10 +36,10 @@ public class Main {
         for (int i = subtask1; i <= subtask5; i++) {
             taskManager.getSubtaskById(i);
         }
-        System.out.println(historyManager.getHistory().toString());
+        System.out.println(taskManager.getHistory().toString());
 
         taskManager.getSubtaskById(11);
-        System.out.println(historyManager.getHistory().toString());
+        System.out.println(taskManager.getHistory().toString());
     }
 
 
