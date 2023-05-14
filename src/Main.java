@@ -38,8 +38,6 @@ public class Main {
         }
         System.out.println(taskManager.getHistory().toString());
 
-        taskManager.getSubtaskById(11);
-        System.out.println(taskManager.getHistory().toString());
     }
 
 
