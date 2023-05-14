@@ -37,8 +37,5 @@ public class Main {
             taskManager.getSubtaskById(i);
         }
         System.out.println(taskManager.getHistory().toString());
-
     }
-
-
 }
