@@ -23,8 +23,7 @@ public class Epic extends AbstractTask {
     }
 
     public void removeSubtaskId(int id) {
-        Integer subId = subtasksId.indexOf(id);
-        subtasksId.remove(subId);
+        subtasksId.remove(Integer.valueOf(id));
     }
 
     public String toString() {
