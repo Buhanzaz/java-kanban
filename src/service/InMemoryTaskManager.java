@@ -3,6 +3,7 @@ package service;
 import model.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -118,17 +119,26 @@ public class InMemoryTaskManager implements TaskManager {
     /*Delete all Task*/
     @Override
     public void deleteTasks() {
+        for (Task value : repository.getTasksHashMap().values()) {
+            historyManager.remove(value.getId());
+        }
         repository.getTasksHashMap().clear();
     }
 
     @Override
     public void deleteEpics() {
+        for (Epic value : repository.getEpicHashMap().values()) {
+            historyManager.remove(value.getId());
+        }
         repository.getEpicHashMap().clear();
         deleteSubtask();
     }
 
     @Override
     public void deleteSubtask() {
+        for (Subtask value : repository.getSubtaskHashMap().values()) {
+            historyManager.remove(value.getId());
+        }
         repository.getSubtaskHashMap().clear();
         for (Epic epic : repository.getEpicHashMap().values()) {
             epic.getSubtasksId().clear();
@@ -139,6 +149,7 @@ public class InMemoryTaskManager implements TaskManager {
     /*Remove by ID*/
     @Override
     public void removeTaskById(int taskId) {
+        historyManager.remove(taskId);
         repository.getTasksHashMap().remove(taskId);
     }
 
@@ -146,6 +157,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeEpicById(int epicId) {
         ArrayList<Integer> subtasksId = repository.getEpicHashMap().get(epicId).getSubtasksId();
 
+        historyManager.remove(epicId);
         repository.getEpicHashMap().remove(epicId);
         for (Integer id : subtasksId) {
             removeSubtaskById(id);
@@ -157,6 +169,7 @@ public class InMemoryTaskManager implements TaskManager {
         int epicId = repository.getSubtaskHashMap().get(subtaskId).getEpicId();
         Epic epic = repository.getEpicHashMap().get(epicId);
 
+        historyManager.remove(subtaskId);
         repository.getSubtaskHashMap().remove(subtaskId);
         if (epic != null) {
             epic.removeSubtaskId(subtaskId);
