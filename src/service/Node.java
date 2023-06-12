@@ -5,6 +5,13 @@ import model.AbstractTask;
 public class Node {
     private AbstractTask item;
     private Node next;
+    private Node last;
+
+    Node(AbstractTask item, Node next, Node last) {
+        this.item = item;
+        this.next = next;
+        this.last = last;
+    }
 
     public AbstractTask getItem() {
         return item;
@@ -27,14 +34,6 @@ public class Node {
     }
 
     public void setLast(Node last) {
-        this.last = last;
-    }
-
-    private Node last;
-
-    public Node(AbstractTask item, Node next, Node last) {
-        this.item = item;
-        this.next = next;
         this.last = last;
     }
 }
