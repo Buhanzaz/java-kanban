@@ -3,9 +3,34 @@ package service;
 import model.AbstractTask;
 
 public class Node {
-    protected AbstractTask item;
-    protected Node next;
-    protected Node last;
+    private AbstractTask item;
+    private Node next;
+
+    public AbstractTask getItem() {
+        return item;
+    }
+
+    public void setItem(AbstractTask item) {
+        this.item = item;
+    }
+
+    public Node getNext() {
+        return next;
+    }
+
+    public void setNext(Node next) {
+        this.next = next;
+    }
+
+    public Node getLast() {
+        return last;
+    }
+
+    public void setLast(Node last) {
+        this.last = last;
+    }
+
+    private Node last;
 
     public Node(AbstractTask item, Node next, Node last) {
         this.item = item;

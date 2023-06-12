@@ -96,7 +96,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int taskId) {
         Task task = repository.getTasksHashMap().get(taskId);
-        historyManager.add(task);
+        if (task != null) {
+            historyManager.add(task);
+        }
         return task;
 
     }
@@ -104,14 +106,18 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicById(int epicId) {
         Epic epic = repository.getEpicHashMap().get(epicId);
-        historyManager.add(epic);
+        if (epic != null) {
+            historyManager.add(epic);
+        }
         return epic;
     }
 
     @Override
     public Subtask getSubtaskById(int subtaskId) {
         Subtask subtask = repository.getSubtaskHashMap().get(subtaskId);
-        historyManager.add(subtask);
+        if (subtask != null) {
+            historyManager.add(subtask);
+        }
         return subtask;
     }
 
