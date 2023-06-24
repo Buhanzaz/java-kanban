@@ -2,7 +2,6 @@ package service;
 
 import model.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,21 +13,21 @@ public class InMemoryTaskManager implements TaskManager {
 
     /*Create*/
     @Override
-    public int create(Task task) throws IOException {
+    public int create(Task task) {
         task.setId(id++);
         repository.getTasksHashMap().put(task.getId(), task);
         return task.getId();
     }
 
     @Override
-    public int create(Epic epic) throws IOException {
+    public int create(Epic epic) {
         epic.setId(id++);
         repository.getEpicHashMap().put(epic.getId(), epic);
         return epic.getId();
     }
 
     @Override
-    public int create(Subtask subtask) throws IOException {
+    public int create(Subtask subtask) {
         int subtaskId;
         int epicId = subtask.getEpicId();
         Epic epic = repository.getEpicHashMap().get(epicId);
@@ -95,7 +94,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     /*Show by ID*/
     @Override
-    public Task getTaskById(int taskId) throws IOException {
+    public Task getTaskById(int taskId) {
         Task task = repository.getTasksHashMap().get(taskId);
         if (task != null) {
             historyManager.add(task);
@@ -104,7 +103,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic getEpicById(int epicId) throws IOException {
+    public Epic getEpicById(int epicId) {
         Epic epic = repository.getEpicHashMap().get(epicId);
         if (epic != null) {
             historyManager.add(epic);
@@ -113,7 +112,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Subtask getSubtaskById(int subtaskId) throws IOException {
+    public Subtask getSubtaskById(int subtaskId) {
         Subtask subtask = repository.getSubtaskHashMap().get(subtaskId);
         if (subtask != null) {
             historyManager.add(subtask);
