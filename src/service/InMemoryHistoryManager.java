@@ -3,6 +3,7 @@ package service;
 import model.AbstractTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             Node lastNode = node.getLast();
 
             if (node == head) {
-                head = nextNode;
+                tail = nextNode;
             } else if (node == tail) {
                 tail = lastNode;
                 tail.setNext(null);
@@ -70,4 +71,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
         }
     }
+
+
 }

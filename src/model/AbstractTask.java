@@ -7,6 +7,7 @@ public abstract class AbstractTask {
     protected String description;
     protected int id;
     protected Status status;
+    protected int epicId;
 
     /*Constructor to update*/
     public AbstractTask(String name, String description, int id, Status status) {
@@ -53,6 +54,10 @@ public abstract class AbstractTask {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public int getEpicId() {
+        return epicId;
     }
 
     @Override

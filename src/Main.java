@@ -1,64 +1,24 @@
 import model.*;
 import service.*;
 
+import java.io.IOException;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         TaskManager taskManager = Manager.getDefault();
+        FileBackedTasksManager fileBackedTasksManager = Manager.getDefaultFileBacked();
 
-        int task1 = taskManager.create(new Task("Task - 1", "Test - 1"));
-        int task2 = taskManager.create(new Task("Task - 2", "Test - 2"));
-        int epic1 = taskManager.create(new Epic("Epic - 1", "Test - 1"));
-        int epic2 = taskManager.create(new Epic("Epic - 2", "Test - 2"));
-        int subtask1 = taskManager.create(new Subtask(epic1, "Subtask - 1", "Test - 1"));
-        int subtask2 = taskManager.create(new Subtask(epic1, "Subtask - 2", "Test - 2"));
-        int subtask3 = taskManager.create(new Subtask(epic1, "Subtask - 3", "Test - 3"));
+        /*fileBackedTasksManager.create(new Task("Task - 1", "Test Task - 1"));
+        fileBackedTasksManager.create(new Task("Task - 2", "Test Task - 2"));
+        fileBackedTasksManager.create(new Task("Task - 3", "Test Task - 3"));
+        fileBackedTasksManager.create(new Epic("Epic - 4", "Test Epic - 4"));
+        fileBackedTasksManager.create(new Epic("Epic - 5", "Test Epic - 6"));
+        fileBackedTasksManager.create(new Subtask(4,"Subtask -7", "Subtask -7"));*/
+        fileBackedTasksManager.read();
 
-        taskManager.getTaskById(task1);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getSubtaskById(subtask1);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getEpicById(epic1);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getTaskById(task1);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getSubtaskById(subtask2);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getEpicById(epic2);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getEpicById(epic1);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getSubtaskById(subtask3);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getTaskById(task2);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getSubtaskById(subtask1);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getEpicById(epic2);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getTaskById(task1);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getSubtaskById(subtask3);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getSubtaskById(subtask2);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getEpicById(epic2);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getSubtaskById(subtask1);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getTaskById(task2);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getEpicById(epic1);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getSubtaskById(subtask3);
-        System.out.println(taskManager.getHistory().toString());
-        taskManager.getSubtaskById(subtask2);
-        System.out.println(taskManager.getHistory().toString());
+        System.out.println(fileBackedTasksManager.getTasks());
+        System.out.println(fileBackedTasksManager.getEpics());
+        System.out.println(fileBackedTasksManager.getSubtasks());
 
-        taskManager.removeTaskById(task1);
-        System.out.println(taskManager.getHistory().toString());
-
-        taskManager.removeEpicById(epic1);
-        taskManager.getEpicById(44);
-        System.out.println(taskManager.getHistory().toString());
     }
 }

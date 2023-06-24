@@ -2,32 +2,33 @@ package service;
 
 import model.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id = 1;
-    private final Repository repository = new Repository();
-    private final HistoryManager historyManager = Manager.getDefaultHistory();
+    protected final Repository repository = new Repository();
+    protected final HistoryManager historyManager = Manager.getDefaultHistory();
 
 
     /*Create*/
     @Override
-    public int create(Task task) {
+    public int create(Task task) throws IOException {
         task.setId(id++);
         repository.getTasksHashMap().put(task.getId(), task);
         return task.getId();
     }
 
     @Override
-    public int create(Epic epic) {
+    public int create(Epic epic) throws IOException {
         epic.setId(id++);
         repository.getEpicHashMap().put(epic.getId(), epic);
         return epic.getId();
     }
 
     @Override
-    public int create(Subtask subtask) {
+    public int create(Subtask subtask) throws IOException {
         int subtaskId;
         int epicId = subtask.getEpicId();
         Epic epic = repository.getEpicHashMap().get(epicId);
@@ -94,17 +95,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     /*Show by ID*/
     @Override
-    public Task getTaskById(int taskId) {
+    public Task getTaskById(int taskId) throws IOException {
         Task task = repository.getTasksHashMap().get(taskId);
         if (task != null) {
             historyManager.add(task);
         }
         return task;
-
     }
 
     @Override
-    public Epic getEpicById(int epicId) {
+    public Epic getEpicById(int epicId) throws IOException {
         Epic epic = repository.getEpicHashMap().get(epicId);
         if (epic != null) {
             historyManager.add(epic);
@@ -113,7 +113,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Subtask getSubtaskById(int subtaskId) {
+    public Subtask getSubtaskById(int subtaskId) throws IOException {
         Subtask subtask = repository.getSubtaskHashMap().get(subtaskId);
         if (subtask != null) {
             historyManager.add(subtask);
@@ -227,4 +227,5 @@ public class InMemoryTaskManager implements TaskManager {
     public List<AbstractTask> getHistory() {
         return historyManager.getHistory();
     }
+
 }

@@ -2,16 +2,17 @@ package service;
 
 import model.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
     /*Create*/
-    int create(Task task);
+    int create(Task task) throws IOException;
 
-    int create(Epic epic);
+    int create(Epic epic) throws IOException;
 
-    int create(Subtask subtask);
+    int create(Subtask subtask) throws IOException;
 
 
     /*Update*/
@@ -31,11 +32,11 @@ public interface TaskManager {
 
 
     /*Show by ID*/
-    Task getTaskById(int taskId);
+    Task getTaskById(int taskId) throws IOException;
 
-    Epic getEpicById(int epicId);
+    Epic getEpicById(int epicId) throws IOException;
 
-    Subtask getSubtaskById(int subtaskId);
+    Subtask getSubtaskById(int subtaskId) throws IOException;
 
     ArrayList<Subtask> getSubtasksInEpic(int epicId);
 
