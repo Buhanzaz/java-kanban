@@ -4,7 +4,7 @@ import model.*;
 import service.interfaces.HistoryManager;
 import service.storage.Repository;
 import service.interfaces.TaskManager;
-import service.storage.TypeTasks;
+import model.TypeTasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int create(Task task) {
         task.setId(id++);
-        task.setType(TypeTasks.TASKS);
         repository.getTasksHashMap().put(task.getId(), task);
         return task.getId();
     }
@@ -27,7 +26,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int create(Epic epic) {
         epic.setId(id++);
-        epic.setType(TypeTasks.EPIC);
         repository.getEpicHashMap().put(epic.getId(), epic);
         return epic.getId();
     }
@@ -36,7 +34,6 @@ public class InMemoryTaskManager implements TaskManager {
     public int create(Subtask subtask) {
         int subtaskId;
         int epicId = subtask.getEpicId();
-        subtask.setType(TypeTasks.SUBTASK);
         Epic epic = repository.getEpicHashMap().get(epicId);
 
         if (epic != null) {

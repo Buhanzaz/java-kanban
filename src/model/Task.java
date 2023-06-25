@@ -9,6 +9,11 @@ public class Task extends AbstractTask {
         super(name, description);
     }
 
+    @Override
+    public TypeTasks getType() {
+        return TypeTasks.TASKS;
+    }
+
     public String toString() {
         return "Task{" +
                 "name='" + getName() + '\'' +

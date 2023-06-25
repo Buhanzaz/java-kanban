@@ -1,4 +1,4 @@
-package service.storage;
+package model;
 
 public enum TypeTasks {
     TASKS,

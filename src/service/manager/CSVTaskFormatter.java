@@ -2,7 +2,7 @@ package service.manager;
 
 import model.*;
 import service.interfaces.HistoryManager;
-import service.storage.TypeTasks;
+import model.TypeTasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,6 @@ public class CSVTaskFormatter {
         }
 
         abstractTask.setId(Integer.parseInt(data[0]));
-        abstractTask.setType(TypeTasks.valueOf(data[1]));
         abstractTask.setStatus(Status.valueOf(data[3]));
         return abstractTask;
     }

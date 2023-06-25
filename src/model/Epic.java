@@ -14,6 +14,11 @@ public class Epic extends AbstractTask {
         this.id = id;
     }
 
+    @Override
+    public TypeTasks getType() {
+        return TypeTasks.EPIC;
+    }
+
     public void addSubtasksId(int id) {
         subtasksId.add(id);
     }

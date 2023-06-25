@@ -17,6 +17,11 @@ public class Subtask extends AbstractTask {
         return epicId;
     }
 
+    @Override
+    public TypeTasks getType() {
+        return TypeTasks.SUBTASK;
+    }
+
     public String toString() {
         return "Subtask{" +
                 "epicId=" + epicId +

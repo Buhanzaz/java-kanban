@@ -1,6 +1,6 @@
 package service.manager;
 
-import service.storage.TypeTasks;
+import model.TypeTasks;
 import service.exception.ManagerSaveException;
 import model.*;
 
