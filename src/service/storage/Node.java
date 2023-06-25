@@ -1,4 +1,4 @@
-package service;
+package service.storage;
 
 import model.AbstractTask;
 
@@ -7,7 +7,7 @@ public class Node {
     private Node next;
     private Node last;
 
-    Node(AbstractTask item, Node next, Node last) {
+    public Node(AbstractTask item, Node next, Node last) {
         this.item = item;
         this.next = next;
         this.last = last;

@@ -1,6 +1,8 @@
-package service;
+package service.manager;
 
 import model.AbstractTask;
+import service.interfaces.HistoryManager;
+import service.storage.Node;
 
 import java.util.ArrayList;
 import java.util.HashMap;

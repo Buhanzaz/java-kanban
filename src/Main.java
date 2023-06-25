@@ -1,5 +1,6 @@
 import model.*;
-import service.*;
+import service.interfaces.TaskManager;
+import service.manager.Manager;
 
 public class Main {
     public static void main(String[] args) {

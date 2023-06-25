@@ -1,4 +1,4 @@
-package service;
+package service.interfaces;
 
 import model.*;
 
@@ -15,7 +15,7 @@ public interface TaskManager {
 
 
     /*Update*/
-    public void update(Task task);
+    void update(Task task);
 
     void update(Epic epic);
 

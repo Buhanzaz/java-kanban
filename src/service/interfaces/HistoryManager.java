@@ -1,4 +1,4 @@
-package service;
+package service.interfaces;
 
 import model.AbstractTask;
 

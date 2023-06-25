@@ -1,5 +1,7 @@
 package model;
 
+import service.storage.TypeTasks;
+
 import java.util.Objects;
 
 public abstract class AbstractTask {
@@ -8,6 +10,7 @@ public abstract class AbstractTask {
     protected int id;
     protected Status status;
     protected int epicId;
+    protected TypeTasks type;
 
     /*Constructor to update*/
     public AbstractTask(String name, String description, int id, Status status) {
@@ -58,6 +61,14 @@ public abstract class AbstractTask {
 
     public int getEpicId() {
         return epicId;
+    }
+
+    public TypeTasks getType() {
+        return type;
+    }
+
+    public void setType(TypeTasks type) {
+        this.type = type;
     }
 
     @Override
