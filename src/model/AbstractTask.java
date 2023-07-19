@@ -1,5 +1,7 @@
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public abstract class AbstractTask {
@@ -8,6 +10,9 @@ public abstract class AbstractTask {
     protected int id;
     protected Status status;
     protected int epicId;
+    protected int duration;
+    protected LocalDateTime startTime;
+    protected String testTime = "HH:mm";
 
     /*Constructor to update*/
     public AbstractTask(String name, String description, int id, Status status) {
@@ -15,6 +20,7 @@ public abstract class AbstractTask {
         this.description = description;
         this.id = id;
         this.status = status;
+
     }
 
     /*Constructor to create*/
@@ -22,6 +28,7 @@ public abstract class AbstractTask {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
+
     }
 
     public String getName() {
@@ -60,14 +67,35 @@ public abstract class AbstractTask {
         return epicId;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plusMinutes(duration);
+    }
+
+
     public abstract TypeTasks getType();
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return false;
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AbstractTask that = (AbstractTask) o;
-        return id == that.id;
+        AbstractTask task = (AbstractTask) o;
+        return id == task.id && epicId == task.epicId && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status;
     }
 
     @Override

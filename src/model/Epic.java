@@ -1,9 +1,10 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends AbstractTask {
-    protected ArrayList<Integer> subtasksId = new ArrayList<>();
+    protected List<Integer> subtasksId = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description);
@@ -23,7 +24,7 @@ public class Epic extends AbstractTask {
         subtasksId.add(id);
     }
 
-    public ArrayList<Integer> getSubtasksId() {
+    public List<Integer> getSubtasksId() {
         return subtasksId;
     }
 
@@ -38,6 +39,6 @@ public class Epic extends AbstractTask {
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
                 ", status='" + getStatus() + '\'' +
-                '}' + '\n';
+                '}';
     }
 }

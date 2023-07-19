@@ -1,10 +1,6 @@
 id,type,name,status,description,epic
-1,TASKS,Task - 1,NEW,Test Task - 1
-2,TASKS,Task - 2,NEW,Test Task - 2
-3,TASKS,Task - 3,NEW,Test Task - 3
-4,EPIC,Epic - 4,NEW,Test Epic - 4
-5,EPIC,Epic - 5,NEW,Test Epic - 5
-6,SUBTASK,Subtask -6,NEW,Subtask -6,4
-7,SUBTASK,Subtask -7,NEW,Subtask -7,4
+28,TASKS,Task,NEW,Task,30,2023-07-11T17:01:38.838350900
+29,EPIC,Epic,NEW,Epic,0,null
+30,SUBTASK,Subtask,NEW,Subtask,29
 
-1,3,7,5,
+28,29,30,

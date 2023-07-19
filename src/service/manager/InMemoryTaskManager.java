@@ -41,6 +41,17 @@ public class InMemoryTaskManager implements TaskManager {
             repository.getSubtaskHashMap().put(subtaskId, subtask);
             epic.addSubtasksId(subtaskId);
             epicUpdateStatus(epicId);
+            if (epic.getStartTime() != null) {
+                if (epic.getStartTime().isAfter(subtask.getStartTime())) {
+                    epic.setStartTime(subtask.getStartTime());
+                    epic.setDuration(epic.getDuration() + subtask.getDuration());
+                } else {
+                    epic.setDuration(epic.getDuration() + subtask.getDuration());
+                }
+            } else {
+                epic.setStartTime(subtask.getStartTime());
+                epic.setDuration(subtask.getDuration());
+            }
         }
         return subtask.getId();
     }
@@ -162,7 +173,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeEpicById(int epicId) {
-        ArrayList<Integer> subtasksId = repository.getEpicHashMap().get(epicId).getSubtasksId();
+        List<Integer> subtasksId = repository.getEpicHashMap().get(epicId).getSubtasksId();
 
         historyManager.remove(epicId);
         repository.getEpicHashMap().remove(epicId);
@@ -186,7 +197,7 @@ public class InMemoryTaskManager implements TaskManager {
     /*Show Tasks if Epic*/
     public ArrayList<Subtask> getSubtasksInEpic(int epicId) {
         ArrayList<Subtask> subtask = new ArrayList<>();
-        ArrayList<Integer> subtasksId = repository.getEpicHashMap().get(epicId).getSubtasksId();
+        List<Integer> subtasksId = repository.getEpicHashMap().get(epicId).getSubtasksId();
 
         for (Integer id : subtasksId) {
             subtask.add(repository.getSubtaskHashMap().get(id));
@@ -199,7 +210,7 @@ public class InMemoryTaskManager implements TaskManager {
         int countDone = 0;
         int countInProgress = 0;
         Epic epic = repository.getEpicHashMap().get(epicID);
-        ArrayList<Integer> subtasksId = epic.getSubtasksId();
+        List<Integer> subtasksId = epic.getSubtasksId();
         int sizeHashMap = subtasksId.size();
 
         if (!subtasksId.isEmpty()) {

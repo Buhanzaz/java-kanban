@@ -6,6 +6,7 @@ import model.*;
 
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -30,7 +31,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             br.readLine();
             while (!Objects.equals(line = br.readLine(), "")) {
-                var task = fromString(line);
+                AbstractTask task = fromString(line);
                 int idTask = task.getId();
                 if (task.getType() == TypeTasks.TASKS) {
                     repository.getTasksHashMap().put(task.getId(), (Task) task);
@@ -169,31 +170,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         super.removeSubtaskById(subtaskId);
         save();
     }
-}
 
-class Main {
     public static void main(String[] args) {
-        File file = new File("FileBacked.csv");
-        FileBackedTasksManager fileWright = new FileBackedTasksManager(file);
+        FileBackedTasksManager manager = new FileBackedTasksManager(new File("FileBacked.csv"));
+        int id = manager.create(new Epic("Epic", "Epic"));
+        int idSubtask = manager.create(new Subtask(id, "Subtask", "Subtask"));
 
-        fileWright.create(new Task("Task - 1", "Test Task - 1"));
-        fileWright.create(new Task("Task - 2", "Test Task - 2"));
-        fileWright.create(new Task("Task - 3", "Test Task - 3"));
-        fileWright.create(new Epic("Epic - 4", "Test Epic - 4"));
-        fileWright.create(new Epic("Epic - 5", "Test Epic - 5"));
-        fileWright.create(new Subtask(4, "Subtask -6", "Subtask -6"));
-        fileWright.create(new Subtask(4, "Subtask -7", "Subtask -7"));
+        manager.getEpicById(id);
+        manager.getSubtaskById(idSubtask);
+        manager.getHistory();
 
-        fileWright.getTaskById(1);
-        fileWright.getTaskById(3);
-        fileWright.getSubtaskById(7);
-        fileWright.getEpicById(5);
-        System.out.println(fileWright.getHistory());
+        FileBackedTasksManager manager1 = new FileBackedTasksManager(new File("FileBacked.csv"));
+        manager1.read();
 
-        FileBackedTasksManager fileRight = FileBackedTasksManager.loadFromFile(file);
-        System.out.println(fileRight.getTasks());
-        System.out.println(fileRight.getEpics());
-        System.out.println(fileRight.getSubtasks());
-        System.out.println(fileRight.getHistory());
     }
 }
