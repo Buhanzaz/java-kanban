@@ -35,7 +35,7 @@ class EpicTest {
 
     @Test
     public void allSubtaskStatusNewEpicTest() {
-        int idSubtask = taskManager.create(new Subtask(idEpic, "Test Subtask", "Description Subtask Test"));
+        int idSubtask = taskManager.create(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", 30, LocalDateTime.now()));
         List<Integer> testSubtaskId = List.of(idSubtask);
         List<Integer> testSubtaskId2 = taskManager.getEpicById(idEpic).getSubtasksId();
 
@@ -45,11 +45,11 @@ class EpicTest {
 
     @Test
     public void allSubtaskStatusDoneEpicTest() {
-        int idSubtask = taskManager.create(new Subtask(idEpic, "Test Subtask", "Description Subtask Test"));
+        int idSubtask = taskManager.create(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", 30, LocalDateTime.now()));
         List<Integer> testSubtaskId = List.of(idSubtask);
         List<Integer> testSubtaskId2 = taskManager.getEpicById(idEpic).getSubtasksId();
 
-        taskManager.update(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", idSubtask, Status.DONE));
+        taskManager.update(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", idSubtask, Status.DONE, 30, LocalDateTime.now()));
 
         assertEquals(testSubtaskId, testSubtaskId2);
         assertEquals(Status.DONE, taskManager.getEpicById(idEpic).getStatus());
@@ -57,12 +57,12 @@ class EpicTest {
 
     @Test
     public void allSubtasksStatusNewAndDoneEpicTest() {
-        int idSubtask = taskManager.create(new Subtask(idEpic, "Test Subtask", "Description Subtask Test"));
-        int idSubtask2 = taskManager.create(new Subtask(idEpic, "Test Subtask 2", "Description Subtask Test 2"));
+        int idSubtask = taskManager.create(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", 30, LocalDateTime.now()));
+        int idSubtask2 = taskManager.create(new Subtask(idEpic, "Test Subtask 2", "Description Subtask Test 2", 30, LocalDateTime.now()));
         List<Integer> testSubtaskId = List.of(idSubtask, idSubtask2);
         List<Integer> testSubtaskId2 = taskManager.getEpicById(idEpic).getSubtasksId();
 
-        taskManager.update(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", idSubtask2, Status.DONE));
+        taskManager.update(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", idSubtask2, Status.DONE, 30, LocalDateTime.now()));
 
         assertEquals(testSubtaskId, testSubtaskId2);
         assertEquals(Status.IN_PROGRESS, taskManager.getEpicById(idEpic).getStatus());
@@ -70,11 +70,11 @@ class EpicTest {
 
     @Test
     public void allSubtasksStatusInProgressEpicTest() {
-        int idSubtask = taskManager.create(new Subtask(idEpic, "Test Subtask", "Description Subtask Test"));
-        int idSubtask2 = taskManager.create(new Subtask(idEpic, "Test Subtask 2", "Description Subtask Test 2"));
+        int idSubtask = taskManager.create(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", 30, LocalDateTime.now()));
+        int idSubtask2 = taskManager.create(new Subtask(idEpic, "Test Subtask 2", "Description Subtask Test 2", 30, LocalDateTime.now()));
 
-        taskManager.update(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", idSubtask, Status.IN_PROGRESS));
-        taskManager.update(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", idSubtask2, Status.IN_PROGRESS));
+        taskManager.update(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", idSubtask, Status.IN_PROGRESS, 30, LocalDateTime.now()));
+        taskManager.update(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", idSubtask2, Status.IN_PROGRESS, 30, LocalDateTime.now()));
 
         List<Integer> testSubtaskId = List.of(idSubtask, idSubtask2);
         List<Integer> testSubtaskId2 = taskManager.getEpicById(idEpic).getSubtasksId();

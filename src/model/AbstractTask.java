@@ -1,10 +1,9 @@
 package model;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public abstract class AbstractTask {
+public abstract class AbstractTask implements Comparable<AbstractTask>{
     protected String name;
     protected String description;
     protected int id;
@@ -12,7 +11,6 @@ public abstract class AbstractTask {
     protected int epicId;
     protected int duration;
     protected LocalDateTime startTime;
-    protected String testTime = "HH:mm";
 
     /*Constructor to update*/
     public AbstractTask(String name, String description, int id, Status status) {
@@ -101,5 +99,14 @@ public abstract class AbstractTask {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public int compareTo(AbstractTask o) {
+        if (startTime != null) {
+            return this.startTime.isBefore(o.startTime) ? -1 : 1;
+        }
+
+        return 1;
     }
 }

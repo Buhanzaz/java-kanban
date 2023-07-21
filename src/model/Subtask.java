@@ -1,29 +1,27 @@
 package model;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Subtask extends AbstractTask {
     protected int epicId;
 
-    public Subtask(int epicId, String name, String description, int id, Status status) {
+    public Subtask(int epicId, String name, String description, int id, Status status, int duration, LocalDateTime startTime) {
         super(name, description, id, status);
         this.epicId = epicId;
-
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
-    public Subtask(int epicId, String name, String description) {
+    public Subtask(int epicId, String name, String description, int duration, LocalDateTime startTime) {
         super(name, description);
         this.epicId = epicId;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
     public int getEpicId() {
         return epicId;
-    }
-
-    public void setEpicId(int epicId) {
-        this.epicId = epicId;
     }
 
     @Override
@@ -38,6 +36,10 @@ public class Subtask extends AbstractTask {
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
                 ", status='" + getStatus() + '\'' +
+                ", epicId=" + epicId +
+                ", duration=" + duration +
+                ", startTime=" + startTime +
+                ", endTime=" + getEndTime() +
                 '}';
     }
 

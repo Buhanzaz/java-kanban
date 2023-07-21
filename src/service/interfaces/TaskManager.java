@@ -55,4 +55,5 @@ public interface TaskManager {
     void removeSubtaskById(int subtaskId);
 
     List<AbstractTask> getHistory();
+
 }

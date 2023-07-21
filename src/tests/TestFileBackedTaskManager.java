@@ -3,6 +3,7 @@ package tests;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.exception.ManagerSaveException;
 import service.manager.FileBackedTasksManager;
 
 import java.io.File;
@@ -15,50 +16,47 @@ public class TestFileBackedTaskManager extends AbstractTaskManagerTest<FileBacke
     File file;
     File emptyFile;
 
+
     @BeforeEach
     void setUp() {
         file = new File("FileBacked.csv");
         emptyFile = new File("test.csv");
         manager = new FileBackedTasksManager(file);
-        task = new Task("Test Task", "Test Task description", 30, LocalDateTime.now());
-        epic = new Epic("Test Epic", "Test Epic description");
-        subtask = new Subtask(1, "Test Epic", "Test Epic description");
+        task = new Task("Test Task", "Test Task", 30, LocalDateTime.now());
+        epic = new Epic("Test Epic", "Test Epic");
+        taskId = manager.create(task);
+        epicId = manager.create(epic);
+        savedEpic = manager.getEpicById(epicId);
+        subtask = new Subtask(epicId, "Test Subtask", "Test Subtask", 30, LocalDateTime.now());
+        subtaskId = manager.create(subtask);
+        savedSubtask = manager.getSubtaskById(subtaskId);
+        savedTask = manager.getTaskById(taskId);
     }
 
-    @Test
+   @Test
     void loadFromFileTest() {
-        int idTask = manager.create(new Task("Task", "Task", 30, LocalDateTime.now()));
-        int idEpic = manager.create(new Epic("Epic", "Epic"));
-        int idSubtask = manager.create(new Subtask(idEpic, "Subtask", "Subtask"));
-
-        manager.getTaskById(idTask);
-        manager.getEpicById(idEpic);
-        manager.getSubtaskById(idSubtask);
-
-
         FileBackedTasksManager newManager = FileBackedTasksManager.loadFromFile(file);
         assertEquals(manager.getHistory().get(0), newManager.getHistory().get(0));
         assertEquals(manager.getHistory().get(1), newManager.getHistory().get(1));
         assertEquals(manager.getHistory().get(2), newManager.getHistory().get(2));
-        assertEquals(manager.getTaskById(idTask), newManager.getTaskById(idTask));
-        assertEquals(manager.getEpicById(idEpic), newManager.getEpicById(idEpic));
-        assertEquals(manager.getSubtaskById(idSubtask), newManager.getSubtaskById(idSubtask));
+        assertEquals(manager.getTaskById(taskId), newManager.getTaskById(taskId));
+        assertEquals(manager.getEpicById(epicId), newManager.getEpicById(epicId));
+        assertEquals(manager.getSubtaskById(subtaskId), newManager.getSubtaskById(subtaskId));
     }
 
     //TODO Переделать тест так чтобы он вылавливал ошибку что файл пуст
-   /* @Test
+   @Test
     void loadFromEmptyFileTest() {
-        manager = FileBackedTasksManager.loadFromFile(emptyFile);
+        ManagerSaveException exception = assertThrows(ManagerSaveException.class,
+                () -> FileBackedTasksManager.loadFromFile(emptyFile));
 
-        assertTrue(manager.getTasks().isEmpty());
-        assertTrue(manager.getEpics().isEmpty());
-        assertTrue(manager.getSubtasks().isEmpty());
-        assertTrue(manager.getHistory().isEmpty());
-    }*/
+        assertNull(exception.getMessage());
+    }
 
     @Test
     void loadFromEpicFileTest() {
-        int epicId = manager.create(epic);
+        deleteTasksTest();
+        deleteSubtask();
         manager = FileBackedTasksManager.loadFromFile(file);
 
         assertEquals(epic, manager.getEpicById(epicId));

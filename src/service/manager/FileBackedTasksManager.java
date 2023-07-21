@@ -57,7 +57,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() {
         try (Writer fileWriter = new FileWriter(file)) {
-            String firstLineCSV = "id,type,name,status,description,epic\n";
+            String firstLineCSV = "id,type,name,status,description,epic,duration,startTime\n";
             fileWriter.write(firstLineCSV);
             for (Map.Entry<Integer, Task> taskEntry : repository.getTasksHashMap().entrySet()) {
                 fileWriter.write(taskToString(taskEntry.getValue()));
@@ -173,15 +173,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
         FileBackedTasksManager manager = new FileBackedTasksManager(new File("FileBacked.csv"));
-        int id = manager.create(new Epic("Epic", "Epic"));
-        int idSubtask = manager.create(new Subtask(id, "Subtask", "Subtask"));
+        manager.create(new Task("Test - 1", "Test - 2", 30, LocalDateTime.of(2007,1,7, 10, 0)));
+        manager.create(new Task("Test - 1", "Test - 2", 30, LocalDateTime.of(20012,1,7, 10, 0)));
+        manager.create(new Task("Test - 1", "Test - 2", 30, LocalDateTime.of(2006,1,7, 10, 0)));
+        manager.create(new Epic("Epic Test - 1", "Test"));
 
+        System.out.println(manager.sortedTasks);
         manager.getEpicById(id);
-        manager.getSubtaskById(idSubtask);
         manager.getHistory();
-
-        FileBackedTasksManager manager1 = new FileBackedTasksManager(new File("FileBacked.csv"));
-        manager1.read();
-
     }
 }

@@ -2,7 +2,7 @@ package tests;
 
 import model.*;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import service.interfaces.TaskManager;
 
 import java.time.LocalDateTime;
@@ -12,17 +12,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
-    protected T manager;
+    T manager;
     Task task;
     Epic epic;
     Subtask subtask;
+    int taskId;
+    int epicId;
+    int subtaskId;
+    Task savedTask;
+    Epic savedEpic;
+    Subtask savedSubtask;
 
     @Test
     void createTaskTest() {
-        int taskId = manager.create(task);
-
-        final Task savedTask = manager.getTaskById(taskId);
-
         assertNotNull(savedTask, "Задача не найдена.");
         assertEquals(task, savedTask, "Задачи не совпадают.");
 
@@ -34,11 +36,13 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     }
 
     @Test
+    void createEmptyTaskTest() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> manager.create((Task) null));
+        assertNull(exception.getMessage());
+    }
+
+    @Test
     void createEpicTest() {
-        int epicId = manager.create(epic);
-
-        final Epic savedEpic = manager.getEpicById(epicId);
-
         assertNotNull(savedEpic, "Задача не найдена.");
         assertEquals(epic, savedEpic, "Задачи не совпадают.");
 
@@ -50,13 +54,13 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     }
 
     @Test
+    void createEmptyEpicTest() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> manager.create((Epic) null));
+        assertNull(exception.getMessage());
+    }
+
+    @Test
     void createSubtaskTest() {
-        int epicId = manager.create(epic);
-        subtask.setEpicId(epicId);
-        int subtaskId = manager.create(subtask);
-
-        final Subtask savedSubtask = manager.getSubtaskById(subtaskId);
-
         assertNotNull(savedSubtask, "Задача не найдена.");
         assertEquals(subtask, savedSubtask, "Задачи не совпадают.");
 
@@ -66,13 +70,13 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
         assertEquals(1, subtasks.size(), "Неверное количество задач.");
         assertEquals(subtask, subtasks.get(0), "Задачи не совпадают.");
     }
-
+    @Test
+    void createEmptySubtaskTest() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> manager.create((Subtask) null));
+        assertNull(exception.getMessage());
+    }
     @Test
     void updateTaskTest() {
-        int taskId = manager.create(task);
-
-        final Task savedTask = manager.getTaskById(taskId);
-
         savedTask.setStatus(Status.DONE);
 
         manager.update(savedTask);
@@ -88,11 +92,14 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void updateEpicTest() {
-        int epicId = manager.create(epic);
-        Epic epic1 = new Epic("Test Epic", "Test Epic description Test", epicId);
+    void updateEmptyTaskTest() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> manager.update((Task) null));
+        assertNull(exception.getMessage());
+    }
 
-        final Epic savedEpic = manager.getEpicById(epicId);
+    @Test
+    void updateEpicTest() {
+        Epic epic1 = new Epic("Test Epic", "Test Epic description Test", epicId);
 
         manager.update(new Epic("Test Epic", "Test Epic description Test", epicId));
 
@@ -105,15 +112,14 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
         assertEquals(1, epics.size(), "Неверное количество задач.");
         assertEquals(epic1, epics.get(0), "Задачи не совпадают.");
     }
+    @Test
+    void updateEmptyEpicTest() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> manager.update((Epic) null));
+        assertNull(exception.getMessage());
+    }
 
     @Test
     void updateSubtaskAndEpicTest() {
-        int epicId = manager.create(epic);
-        subtask.setEpicId(epicId);
-        int subtaskId = manager.create(subtask);
-
-        final Subtask savedSubtask = manager.getSubtaskById(subtaskId);
-
         savedSubtask.setStatus(Status.DONE);
         manager.update(subtask);
 
@@ -127,10 +133,16 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
         assertEquals(subtask, subtasks.get(0), "Задачи не совпадают.");
         assertEquals(manager.getEpicById(epicId).getStatus(), savedSubtask.getStatus());
     }
+    @Test
+    void updateEmptySubtaskAndEpicTest() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> manager.update((Epic) null));
+        assertNull(exception.getMessage());
+        NullPointerException exception2 = assertThrows(NullPointerException.class, () -> manager.update((Subtask) null));
+        assertNull(exception2.getMessage());
+    }
 
     @Test
     void getTasksTest() {
-        manager.create(task);
         manager.create(task);
 
         final List<Task> tasks = manager.getTasks();
@@ -140,68 +152,104 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
         assertEquals(task, tasks.get(0), "Задачи не совпадают.");
         assertEquals(task, tasks.get(1), "Задачи не совпадают.");
     }
+    @Test
+    void getEmptyTaskTest() {
+        manager.deleteTasks();
+
+        assertTrue(manager.getTasks().isEmpty());
+    }
 
     @Test
     void getEpicsTest() {
-        int epicId = manager.create(epic);
-        subtask.setEpicId(epicId);
+        manager.create(epic);
+
+        final List<Epic> epics = manager.getEpics();
+
+        assertNotNull(epics, "Задачи на возвращаются.");
+        assertEquals(2, epics.size(), "Неверное количество задач.");
+        assertEquals(epic, epics.get(0), "Задачи не совпадают.");
+    }
+
+    @Test
+    void getEmptyEpicsTest() {
+        manager.deleteEpics();
+
+        assertTrue(manager.getEpics().isEmpty());
+    }
+
+    @Test
+    void getSubtasksTest() {
         manager.create(subtask);
 
-        final List<Subtask> subtasks = manager.getSubtasks();
+        List<Subtask> subtasks = manager.getSubtasks();
 
         assertNotNull(subtasks, "Задачи на возвращаются.");
-        assertEquals(1, subtasks.size(), "Неверное количество задач.");
+        assertEquals(2, subtasks.size(), "Неверное количество задач.");
         assertEquals(subtask, subtasks.get(0), "Задачи не совпадают.");
     }
 
     @Test
-    void getTaskById() {
-        int idTask = manager.create(task);
+    void getEmptySubtaskTest() {
+        manager.deleteSubtask();
 
-        Task saveTask = manager.getTaskById(idTask);
-        assertEquals(task, saveTask);
+        assertTrue(manager.getSubtasks().isEmpty());
+    }
+
+
+    @Test
+    void getTaskById() {
+        assertEquals(task, manager.getTaskById(taskId));
+    }
+
+    @Test
+    void getEmptyTaskById() {
+        assertNull(manager.getTaskById(Integer.MAX_VALUE));
     }
 
     @Test
     void getEpicById() {
-        int idEpic = manager.create(epic);
-
-        Epic saveEpic = manager.getEpicById(idEpic);
-        assertEquals(epic, saveEpic);
+        assertEquals(epic, manager.getEpicById(epicId));
+    }
+    @Test
+    void getEmptyEpicById() {
+        assertNull(manager.getEpicById(Integer.MAX_VALUE));
     }
 
     @Test
     void getSubtaskById() {
-        int idEpic = manager.create(epic);
-        subtask.setEpicId(idEpic);
-        int idSubtask = manager.create(subtask);
+        assertEquals(subtask, manager.getSubtaskById(subtaskId));
+    }
 
-        Subtask saveSubtask = manager.getSubtaskById(idSubtask);
-        assertEquals(subtask, saveSubtask);
+    @Test
+    void getEmptySubtaskById() {
+        assertNull(manager.getSubtaskById(Integer.MAX_VALUE));
     }
 
     @Test
     void getSubtasksInEpic() {
-        int idEpic = manager.create(epic);
-        Subtask subtask1 = new Subtask(idEpic, "test", "test");
-        Subtask subtask2 = new Subtask(idEpic, "test", "test");
-        int idSubtask1 = manager.create(subtask1);
-        int idSubtask2 = manager.create(subtask2);
-        subtask1.setId(idSubtask1);
-        subtask2.setId(idSubtask2);
-        List<Subtask> testSubtask = List.of(subtask1, subtask2);
+        Subtask subtask1 = new Subtask(epicId, "test", "test", 30, LocalDateTime.now());
+        manager.create(subtask1);
+        List<Subtask> testSubtask = List.of(subtask, subtask1);
 
-        List<Subtask> saveSubtasks = manager.getSubtasksInEpic(idEpic);
+        List<Subtask> saveSubtasks = manager.getSubtasksInEpic(epicId);
 
         assertEquals(testSubtask.get(0), saveSubtasks.get(0));
         assertEquals(testSubtask.get(1), saveSubtasks.get(1));
     }
 
     @Test
+    void getEmptySubtasksInEpic() {
+        manager.deleteSubtask();
+        manager.deleteEpics();
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> manager.getSubtasksInEpic(Integer.MAX_VALUE));
+        assertNull(exception.getMessage());
+    }
+    @Test
     void deleteTasksTest() {
         manager.create(task);
         manager.create(task);
         manager.deleteTasks();
+
 
         assertTrue(manager.getTasks().isEmpty());
         assertEquals(0, manager.getTasks().size());
@@ -214,8 +262,9 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
         manager.deleteEpics();
 
         //TODO Дописать проверку на удаление подзадач
-
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> manager.getSubtasksInEpic(epicId));
         assertTrue(manager.getEpics().isEmpty());
+        assertNull(exception.getMessage());
         assertEquals(0, manager.getEpics().size());
     }
 
@@ -231,39 +280,27 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
     @Test
     void removeTaskById() {
-        int idTask = manager.create(task);
+        manager.removeTaskById(taskId);
 
-        manager.removeTaskById(idTask);
-
-        assertTrue(manager.getTasks().isEmpty());
-        assertEquals(0, manager.getTasks().size());
+        assertNull(manager.getTaskById(taskId));
     }
 
     @Test
     void removeEpicById() {
-        int idTask = manager.create(epic);
+        manager.removeEpicById(epicId);
 
-        manager.removeEpicById(idTask);
-//TODO Дописать проверку на удаление подзадач
-        assertTrue(manager.getEpics().isEmpty());
-        assertEquals(0, manager.getEpics().size());
+        assertNull(manager.getEpicById(epicId));
     }
 
     @Test
     void removeSubtaskById() {
-        int idEpic = manager.create(epic);
-        subtask.setEpicId(idEpic);
-        int idTask = manager.create(subtask);
-        assertNotNull(manager.getEpicById(manager.getSubtaskById(idTask).getEpicId()));
-        manager.removeSubtaskById(idTask);
-
-
-        assertTrue(manager.getSubtasks().isEmpty());
-        assertEquals(0, manager.getSubtasks().size());
+        manager.removeSubtaskById(subtaskId);
+        assertNull(manager.getSubtaskById(subtaskId));
     }
 
     @Test
     void getHistory() {
-
+       /* List<AbstractTask> saveTaskHistory = manager.getHistory();
+        assertEquals(, saveTaskHistory.get(0));*/
     }
 }
