@@ -1,12 +1,9 @@
 package model;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends AbstractTask {
-    LocalDateTime startTime = null;
-    LocalDateTime endTime = null;
     protected List<Integer> subtasksId = new ArrayList<>();
 
     public Epic(String name, String description) {
@@ -36,15 +33,6 @@ public class Epic extends AbstractTask {
         subtasksId.remove(subId);
     }
 
-    @Override
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    @Override
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
 
     public String toString() {
         return "Epic{" +

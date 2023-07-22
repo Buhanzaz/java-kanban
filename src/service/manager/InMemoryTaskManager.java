@@ -6,7 +6,6 @@ import service.interfaces.HistoryManager;
 import service.interfaces.TaskManager;
 import service.storage.Repository;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -14,8 +13,18 @@ public class InMemoryTaskManager implements TaskManager {
     protected static int id = 1;
     protected final Repository repository = new Repository();
     protected final HistoryManager historyManager = Manager.getDefaultHistory();
-    protected final TreeSet<AbstractTask> sortedTasks = new TreeSet<>(AbstractTask::compareTo);
-    protected final Map<Duration, Boolean> freeTime = new HashMap<>();
+    protected Set<AbstractTask> sortedTasks = new TreeSet<>((t1, t2) -> {
+        if (t1.getStartTime() == null) {
+            if (t2.getStartTime() == null) {
+                return 0;
+            }
+            return 1;
+        }
+        return t1.getStartTime().compareTo(t2.getStartTime());
+    });
+    //protected TreeSet<AbstractTask> sortedTasks = new TreeSet<>(AbstractTask::compareTo);
+    protected final TreeMap<LocalDateTime, AbstractTask> localDateTimeAbstractTaskTreeMap = new TreeMap<>();
+
 
 
     /*Create*/
@@ -47,10 +56,8 @@ public class InMemoryTaskManager implements TaskManager {
             repository.getSubtaskHashMap().put(subtaskId, subtask);
             epic.addSubtasksId(subtaskId);
             epicUpdateStatus(epicId);
-            addPrioritizedTasks(subtask);
-
             updateTimeEpic(subtask, epic);
-            addPrioritizedTasks(epic);
+            addPrioritizedTasks(subtask);
         }
         return subtask.getId();
     }
@@ -104,7 +111,7 @@ public class InMemoryTaskManager implements TaskManager {
             repository.getSubtaskHashMap().put(subtaskId, subtask);
             epicUpdateStatus(epicId);
             updateTimeEpic(subtask, epic);
-            addPrioritizedTasks(epic);
+            sortedTasks.remove(getSubtaskById(subtaskId));
             addPrioritizedTasks(subtask);
         }
     }
@@ -260,25 +267,28 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
+    public List<AbstractTask> getPrioritizedTasks() {
+        return new ArrayList<>(sortedTasks);
+    }
+
 
     public void addPrioritizedTasks(AbstractTask task) {
-        LocalDateTime startTime = task.getStartTime();
-        LocalDateTime endTime = task.getEndTime();
+        LocalDateTime startTimeNewTask = task.getStartTime();
+        LocalDateTime endTimeNewTask = task.getEndTime();
 
         for (AbstractTask taskSort : sortedTasks) {
-            LocalDateTime startTimeTask = taskSort.getStartTime();
-            LocalDateTime endTimeTask = taskSort.getStartTime();
-            if (startTimeTask == null || startTime == null || task.equals(taskSort)) {
-                sortedTasks.add(task);
+            LocalDateTime startTimeSortedTask = taskSort.getStartTime();
+            LocalDateTime endTimeSortedTask = taskSort.getEndTime();
+
+            if (startTimeSortedTask == null || startTimeNewTask == null || task.equals(taskSort)) {
+                continue;
             }
-            if (!endTime.isAfter(startTimeTask)) {
-                sortedTasks.add(task);
-            }
-            if (!endTimeTask.isAfter(startTime)) {
-                sortedTasks.add(task);
+            if (!endTimeNewTask.isAfter(startTimeSortedTask) || !endTimeSortedTask.isAfter(startTimeNewTask) ||
+                    taskSort.getId() == task.getEpicId()) {
+                continue;
             }
             throw new TaskException("Задача " + task.getId() + "пересекается с " + taskSort.getId());
         }
-
+        sortedTasks.add(task);
     }
 }

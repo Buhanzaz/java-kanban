@@ -257,8 +257,6 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
     @Test
     void deleteEpics() {
-        manager.create(epic);
-        manager.create(epic);
         manager.deleteEpics();
 
         //TODO Дописать проверку на удаление подзадач
@@ -296,11 +294,5 @@ abstract class AbstractTaskManagerTest<T extends TaskManager> {
     void removeSubtaskById() {
         manager.removeSubtaskById(subtaskId);
         assertNull(manager.getSubtaskById(subtaskId));
-    }
-
-    @Test
-    void getHistory() {
-       /* List<AbstractTask> saveTaskHistory = manager.getHistory();
-        assertEquals(, saveTaskHistory.get(0));*/
     }
 }

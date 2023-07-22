@@ -173,13 +173,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
         FileBackedTasksManager manager = new FileBackedTasksManager(new File("FileBacked.csv"));
-        manager.create(new Task("Test - 1", "Test - 2", 30, LocalDateTime.of(2007,1,7, 10, 0)));
-        manager.create(new Task("Test - 1", "Test - 2", 30, LocalDateTime.of(20012,1,7, 10, 0)));
-        manager.create(new Task("Test - 1", "Test - 2", 30, LocalDateTime.of(2006,1,7, 10, 0)));
-        manager.create(new Epic("Epic Test - 1", "Test"));
+        int epicId1 = manager.create(new Epic("Epic Test - 1", "Test"));
+        int subtaskId2 = manager.create(new Subtask(epicId1, "Test Subtask - 1 ", "Test Subtask", 30, LocalDateTime.of(2004,1,1, 1, 0)));
+        int subtaskId3 = manager.create(new Subtask(epicId1, "Test Subtask - 2", "Test Subtask", 30, LocalDateTime.of(2005,1,1, 1, 0)));
+        manager.update(new Subtask(epicId1, "Test Subtask", "Test Subtask", subtaskId2, Status.DONE,30, LocalDateTime.of(2004,1,1, 1, 0)));
 
-        System.out.println(manager.sortedTasks);
-        manager.getEpicById(id);
-        manager.getHistory();
+        //manager.sortedTasks.remove(manager.getEpicById(epicId));
+        manager.getPrioritizedTasks().forEach(System.out::println);
+
     }
 }

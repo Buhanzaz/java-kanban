@@ -3,7 +3,7 @@ package model;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public abstract class AbstractTask implements Comparable<AbstractTask>{
+public abstract class AbstractTask{
     protected String name;
     protected String description;
     protected int id;
@@ -82,7 +82,10 @@ public abstract class AbstractTask implements Comparable<AbstractTask>{
     }
 
     public LocalDateTime getEndTime() {
-        return startTime.plusMinutes(duration);
+        if (startTime !=null) {
+            return startTime.plusMinutes(duration);
+        }
+        return null;
     }
 
 
@@ -93,7 +96,7 @@ public abstract class AbstractTask implements Comparable<AbstractTask>{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractTask task = (AbstractTask) o;
-        return id == task.id && epicId == task.epicId && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status;
+        return id == task.id;
     }
 
     @Override
@@ -101,12 +104,23 @@ public abstract class AbstractTask implements Comparable<AbstractTask>{
         return Objects.hash(id);
     }
 
-    @Override
+    /*@Override
     public int compareTo(AbstractTask o) {
         if (startTime != null) {
             return this.startTime.isBefore(o.startTime) ? -1 : 1;
         }
 
         return 1;
-    }
+    }*/
+
+   /* @Override
+    public int compareTo(AbstractTask o) {
+        if (this.startTime == null || this.startTime.isBefore(o.startTime)) {
+            return 1;
+        } else if (o.startTime == null) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }*/
 }

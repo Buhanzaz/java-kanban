@@ -1,6 +1,6 @@
 id,type,name,status,description,epic,duration,startTime
-1,TASKS,Test - 1,NEW,Test - 2,30,2007-01-07T10:00
-2,TASKS,Test - 1,NEW,Test - 2,30,+20012-01-07T10:00
-3,TASKS,Test - 1,NEW,Test - 2,30,2006-01-07T10:00
-4,EPIC,Epic Test - 1,NEW,Test,0,null
+1,EPIC,Epic Test - 1,IN_PROGRESS,Test,90,2004-01-01T01:00
+2,SUBTASK,Test Subtask,DONE,Test Subtask,1,30,2004-01-01T01:00
+3,SUBTASK,Test Subtask - 2,NEW,Test Subtask,1,30,2005-01-01T01:00
 
+2,
