@@ -42,6 +42,7 @@ public class InMemoryTaskManager implements TaskManager {
             repository.getSubtaskHashMap().put(subtaskId, subtask);
             epic.addSubtasksId(subtaskId);
             epicUpdateStatus(epicId);
+            updateEpicTime(epic);
         }
         return subtask.getId();
     }
@@ -65,6 +66,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epicInMap != null) {
             epicInMap.setName(epic.getName());
             epicInMap.setDescription(epic.getDescription());
+            updateEpicTime(epic);
         }
     }
 
@@ -77,6 +79,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtaskInMap != null) {
             repository.getSubtaskHashMap().put(subtaskId, subtask);
             epicUpdateStatus(epicId);
+            updateEpicTime(getEpicById(epicId));
         }
     }
 

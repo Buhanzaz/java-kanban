@@ -65,7 +65,10 @@ public abstract class AbstractTask {
     }
 
     public LocalDateTime getEndTime() {
-        return startTime.plusMinutes(duration);
+        if (startTime != null) {
+            return startTime.plusMinutes(duration);
+        }
+        return null;
     }
 
     public void setStartTime(LocalDateTime startTime) {

@@ -57,7 +57,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() {
         try (Writer fileWriter = new FileWriter(file)) {
-            String firstLineCSV = "id,type,name,status,description,epic\n";
+            String firstLineCSV = "id,type,name,status,description,epicId,duration,startTime\n";
             fileWriter.write(firstLineCSV);
             for (Map.Entry<Integer, Task> taskEntry : repository.getTasksHashMap().entrySet()) {
                 fileWriter.write(taskToString(taskEntry.getValue()));
@@ -178,6 +178,13 @@ class Main {
         FileBackedTasksManager fileWright = new FileBackedTasksManager(file);
 
         int id1Task = fileWright.create(new Task("Task Test 1", "Test 1", 30, LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0)));
+        int id2Epic = fileWright.create(new Epic("Epic Test 2", "Test 2"));
+        int id3Subtask = fileWright.create(new Subtask(id2Epic, "Subtask Test 3", "Test 3", 30, LocalDateTime.of(2001, 1, 1, 0, 0, 0, 0)));
+        int id4Subtask = fileWright.create(new Subtask(id2Epic, "Subtask Test 4", "Test 4", 30, LocalDateTime.of(2002, 1, 1, 0, 0, 0, 0)));
         System.out.println(fileWright.getTaskById(id1Task));
+        System.out.println(fileWright.getEpicById(id2Epic));
+        System.out.println(fileWright.getSubtaskById(id3Subtask));
+        System.out.println(fileWright.getSubtaskById(id4Subtask));
+
     }
 }

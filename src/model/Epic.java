@@ -33,16 +33,15 @@ public class Epic extends AbstractTask {
         subtasksId.remove(subId);
     }
 
-
     public String toString() {
         return "Epic{" +
                 "name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
                 ", status='" + getStatus() + '\'' +
-                ", epicId=" + epicId +
-                ", duration=" + duration +
-                ", startTime=" + startTime +
-                '}';
+                ", duration='" + getDuration() + '\'' +
+                ", startTime='" + getStartTime() + '\'' +
+                ", endTime='" + getEndTime() + '\'' +
+                '}' + '\n';
     }
 }
