@@ -35,7 +35,7 @@ public class CSVTaskFormatter {
         } else if (TypeTasks.EPIC.equals(name)) {
             abstractTask = new Epic(data[2], data[4]);
         } else if (TypeTasks.SUBTASK.equals(name)) {
-            abstractTask = new Subtask(Integer.parseInt(data[5]), data[4], data[2], Integer.parseInt(data[6]), LocalDateTime.parse(data[7]));
+            abstractTask = new Subtask(Integer.parseInt(data[5]), data[4], data[2], Integer.parseInt(data[5]), LocalDateTime.parse(data[6]));
         }
 
         abstractTask.setId(Integer.parseInt(data[0]));

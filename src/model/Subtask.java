@@ -1,7 +1,6 @@
 package model;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class Subtask extends AbstractTask {
     protected int epicId;
@@ -36,24 +35,6 @@ public class Subtask extends AbstractTask {
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
                 ", status='" + getStatus() + '\'' +
-                ", epicId=" + epicId +
-                ", duration=" + duration +
-                ", startTime=" + startTime +
-                ", endTime=" + getEndTime() +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Subtask subtask = (Subtask) o;
-        return epicId == subtask.epicId;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), epicId);
+                '}' + '\n';
     }
 }

@@ -1,6 +1,4 @@
-id,type,name,status,description,epic,duration,startTime
-1,EPIC,Epic Test - 1,IN_PROGRESS,Test,90,2004-01-01T01:00
-2,SUBTASK,Test Subtask,DONE,Test Subtask,1,30,2004-01-01T01:00
-3,SUBTASK,Test Subtask - 2,NEW,Test Subtask,1,30,2005-01-01T01:00
+id,type,name,status,description,epic
+1,TASKS,Task Test 1,NEW,Test 1,30,2000-01-01T00:00
 
-2,
+1,

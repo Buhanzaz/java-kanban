@@ -31,7 +31,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             br.readLine();
             while (!Objects.equals(line = br.readLine(), "")) {
-                AbstractTask task = fromString(line);
+                var task = fromString(line);
                 int idTask = task.getId();
                 if (task.getType() == TypeTasks.TASKS) {
                     repository.getTasksHashMap().put(task.getId(), (Task) task);
@@ -57,7 +57,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() {
         try (Writer fileWriter = new FileWriter(file)) {
-            String firstLineCSV = "id,type,name,status,description,epic,duration,startTime\n";
+            String firstLineCSV = "id,type,name,status,description,epic\n";
             fileWriter.write(firstLineCSV);
             for (Map.Entry<Integer, Task> taskEntry : repository.getTasksHashMap().entrySet()) {
                 fileWriter.write(taskToString(taskEntry.getValue()));
@@ -170,16 +170,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         super.removeSubtaskById(subtaskId);
         save();
     }
+}
 
+class Main {
     public static void main(String[] args) {
-        FileBackedTasksManager manager = new FileBackedTasksManager(new File("FileBacked.csv"));
-        int epicId1 = manager.create(new Epic("Epic Test - 1", "Test"));
-        int subtaskId2 = manager.create(new Subtask(epicId1, "Test Subtask - 1 ", "Test Subtask", 30, LocalDateTime.of(2004,1,1, 1, 0)));
-        int subtaskId3 = manager.create(new Subtask(epicId1, "Test Subtask - 2", "Test Subtask", 30, LocalDateTime.of(2005,1,1, 1, 0)));
-        manager.update(new Subtask(epicId1, "Test Subtask", "Test Subtask", subtaskId2, Status.DONE,30, LocalDateTime.of(2004,1,1, 1, 0)));
+        File file = new File("FileBacked.csv");
+        FileBackedTasksManager fileWright = new FileBackedTasksManager(file);
 
-        //manager.sortedTasks.remove(manager.getEpicById(epicId));
-        manager.getPrioritizedTasks().forEach(System.out::println);
-
+        int id1Task = fileWright.create(new Task("Task Test 1", "Test 1", 30, LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0)));
+        System.out.println(fileWright.getTaskById(id1Task));
     }
 }

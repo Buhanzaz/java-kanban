@@ -3,14 +3,15 @@ package model;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public abstract class AbstractTask{
+public abstract class AbstractTask {
     protected String name;
     protected String description;
     protected int id;
     protected Status status;
     protected int epicId;
-    protected int duration;
     protected LocalDateTime startTime;
+    protected int duration;
+
 
     /*Constructor to update*/
     public AbstractTask(String name, String description, int id, Status status) {
@@ -18,7 +19,6 @@ public abstract class AbstractTask{
         this.description = description;
         this.id = id;
         this.status = status;
-
     }
 
     /*Constructor to create*/
@@ -26,7 +26,6 @@ public abstract class AbstractTask{
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
-
     }
 
     public String getName() {
@@ -61,8 +60,16 @@ public abstract class AbstractTask{
         this.status = status;
     }
 
-    public int getEpicId() {
-        return epicId;
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plusMinutes(duration);
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
     public int getDuration() {
@@ -73,54 +80,22 @@ public abstract class AbstractTask{
         this.duration = duration;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
+    public int getEpicId() {
+        return epicId;
     }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        if (startTime !=null) {
-            return startTime.plusMinutes(duration);
-        }
-        return null;
-    }
-
 
     public abstract TypeTasks getType();
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) return false;
         if (o == null || getClass() != o.getClass()) return false;
-        AbstractTask task = (AbstractTask) o;
-        return id == task.id;
+        AbstractTask that = (AbstractTask) o;
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
     }
-
-    /*@Override
-    public int compareTo(AbstractTask o) {
-        if (startTime != null) {
-            return this.startTime.isBefore(o.startTime) ? -1 : 1;
-        }
-
-        return 1;
-    }*/
-
-   /* @Override
-    public int compareTo(AbstractTask o) {
-        if (this.startTime == null || this.startTime.isBefore(o.startTime)) {
-            return 1;
-        } else if (o.startTime == null) {
-            return 0;
-        } else {
-            return -1;
-        }
-    }*/
 }
