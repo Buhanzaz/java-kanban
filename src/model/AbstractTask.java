@@ -91,10 +91,10 @@ public abstract class AbstractTask {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return false;
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractTask that = (AbstractTask) o;
-        return id == that.id;
+        return id == that.id && epicId == that.epicId && duration == that.duration && Objects.equals(name, that.name) && Objects.equals(description, that.description) && status == that.status && Objects.equals(startTime, that.startTime);
     }
 
     @Override

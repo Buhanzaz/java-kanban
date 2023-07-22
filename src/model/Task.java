@@ -3,6 +3,14 @@ package model;
 import java.time.LocalDateTime;
 
 public class Task extends AbstractTask {
+    public Task(String name, String description, int id, Status status) {
+        super(name, description, id, status);
+    }
+
+    public Task(String name, String description) {
+        super(name, description);
+    }
+
     public Task(String name, String description, int id, Status status, int duration, LocalDateTime startTime) {
         super(name, description, id, status);
         this.duration = duration;
@@ -19,6 +27,7 @@ public class Task extends AbstractTask {
     public TypeTasks getType() {
         return TypeTasks.TASKS;
     }
+
 
     public String toString() {
         return "Task{" +

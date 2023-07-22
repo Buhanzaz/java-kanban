@@ -1,18 +1,27 @@
 package service.manager;
 
 import model.*;
+import service.exception.intersectionException;
 import service.interfaces.HistoryManager;
 import service.storage.Repository;
 import service.interfaces.TaskManager;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected static int id = 1;
     protected final Repository repository = new Repository();
     protected final HistoryManager historyManager = Manager.getDefaultHistory();
+    protected final Set<AbstractTask> sortedTaskByTime = new TreeSet<>((time1, time2) -> {
+        if (time1.getStartTime() == null) {
+            if (time2.getStartTime() == null) {
+                return 0;
+            }
+            return 1;
+        }
+        return time1.getStartTime().compareTo(time2.getStartTime());
+    });
 
 
     /*Create*/
@@ -20,6 +29,7 @@ public class InMemoryTaskManager implements TaskManager {
     public int create(Task task) {
         task.setId(id++);
         repository.getTasksHashMap().put(task.getId(), task);
+        addPrioritizedTasks(task);
         return task.getId();
     }
 
@@ -43,6 +53,7 @@ public class InMemoryTaskManager implements TaskManager {
             epic.addSubtasksId(subtaskId);
             epicUpdateStatus(epicId);
             updateEpicTime(epic);
+            addPrioritizedTasks(subtask);
         }
         return subtask.getId();
     }
@@ -233,15 +244,28 @@ public class InMemoryTaskManager implements TaskManager {
         List<Subtask> subtasks = getSubtasksInEpic(epic.getId());
 
         LocalDateTime startTime = LocalDateTime.MAX;
+        LocalDateTime endTime = LocalDateTime.MIN;
         int duration = 0;
         for (Subtask subtask : subtasks) {
             if (subtask.getStartTime() != null && subtask.getStartTime().isBefore(startTime)) {
                 startTime = subtask.getStartTime();
             }
+            if (subtask.getEndTime() != null && subtask.getEndTime().isAfter(endTime)) {
+                endTime = subtask.getEndTime();
+            }
             duration += subtask.getDuration();
         }
         epic.setStartTime(startTime == LocalDateTime.MAX ? null : startTime);
+        epic.setEndTime(endTime == LocalDateTime.MIN ? null : endTime);
         epic.setDuration(duration);
+    }
+
+    private void addPrioritizedTasks(AbstractTask task) {
+        sortedTaskByTime.add(task);
+    }
+
+    public List<AbstractTask> getPrioritizedTasks() {
+        return new ArrayList<>(sortedTaskByTime);
     }
 
     @Override
