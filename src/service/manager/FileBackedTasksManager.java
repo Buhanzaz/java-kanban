@@ -6,7 +6,6 @@ import model.*;
 
 
 import java.io.*;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,14 +30,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             br.readLine();
             while (!Objects.equals(line = br.readLine(), "")) {
-                var task = fromString(line);
+                AbstractTask task = fromString(line);
                 int idTask = task.getId();
                 if (task.getType() == TypeTasks.TASKS) {
                     repository.getTasksHashMap().put(task.getId(), (Task) task);
                 } else if (task.getType() == TypeTasks.EPIC) {
                     repository.getEpicHashMap().put(task.getId(), (Epic) task);
                 } else if (task.getType() == TypeTasks.SUBTASK) {
-                    repository.getSubtaskHashMap().put(task.getId(), (Subtask) task);
+                    Subtask subtask = (Subtask) task;
+                    repository.getSubtaskHashMap().put(subtask.getId(), subtask);
+                    Epic epic = getEpicById(subtask.getEpicId());
+                    epic.addSubtasksId(subtask.getId());
+                    updateEpicTime(epic);
                 }
                 InMemoryTaskManager.id = idTask;
             }
@@ -169,22 +172,5 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public void removeSubtaskById(int subtaskId) {
         super.removeSubtaskById(subtaskId);
         save();
-    }
-}
-
-class Main {
-    public static void main(String[] args) {
-        File file = new File("FileBacked.csv");
-        FileBackedTasksManager fileWright = new FileBackedTasksManager(file);
-
-        int id1Task = fileWright.create(new Task("Task Test 1", "Test 1", 30, LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0)));
-        int id2Epic = fileWright.create(new Epic("Epic Test 2", "Test 2"));
-        int id3Subtask = fileWright.create(new Subtask(id2Epic, "Subtask Test 3", "Test 3", 30, LocalDateTime.of(2001, 1, 1, 0, 0, 0, 0)));
-        int id4Subtask = fileWright.create(new Subtask(id2Epic, "Subtask Test 4", "Test 4", 30, LocalDateTime.of(2002, 1, 1, 0, 0, 0, 0)));
-        int id5Task = fileWright.create(new Task("Task Test 5", "Test 5", 30, LocalDateTime.of(2003, 1, 1, 0, 0, 0, 0)));
-        int id6Epic = fileWright.create(new Epic("Epic Test 6", "Test 6"));
-
-        fileWright.getPrioritizedTasks().forEach(System.out::println);
-        System.out.println();
     }
 }

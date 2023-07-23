@@ -261,6 +261,24 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void addPrioritizedTasks(AbstractTask task) {
+        LocalDateTime startTime = task.getStartTime();
+        LocalDateTime endTime = task.getEndTime();
+
+        for (AbstractTask abstractTask : getPrioritizedTasks()) {
+            LocalDateTime entryStartTime = abstractTask.getStartTime();
+            LocalDateTime entryEndTime = abstractTask.getEndTime();
+
+            if (startTime == null || endTime == null || task.equals(abstractTask)) {
+                continue;
+            }
+            if (startTime.isAfter(entryEndTime)) {
+                continue;
+            }
+            if (endTime.isBefore(entryStartTime)) {
+                continue;
+            }
+            throw new intersectionException("Задача " + task.getId() + " пересекается с задачей № " + abstractTask.getId());
+        }
         sortedTaskByTime.add(task);
     }
 

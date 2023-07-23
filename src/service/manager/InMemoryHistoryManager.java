@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private HashMap<Integer, Node> idToTasksHistory = new HashMap<>();
+    private final HashMap<Integer, Node> idToTasksHistory = new HashMap<>();
     private Node head;
     private Node tail;
 
@@ -68,7 +68,6 @@ public class InMemoryHistoryManager implements HistoryManager {
                 tail = lastNode;
                 tail.setNext(null);
             } else {
-                //nextNode.setLast(lastNode);
                 lastNode.setNext(nextNode);
             }
         }

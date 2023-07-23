@@ -1,8 +1,6 @@
 id,type,name,status,description,epicId,duration,startTime
-1,TASKS,Task Test 1,NEW,Test 1,30,2000-01-01T00:00
-5,TASKS,Task Test 5,NEW,Test 5,30,2003-01-01T00:00
-2,EPIC,Epic Test 2,NEW,Test 2,60,2001-01-01T00:00
-6,EPIC,Epic Test 6,NEW,Test 6,0,null
-3,SUBTASK,Subtask Test 3,NEW,Test 3,2,30,2001-01-01T00:00
-4,SUBTASK,Subtask Test 4,NEW,Test 4,2,30,2002-01-01T00:00
+220,TASKS,Test Task,NEW,Test Task,30,2023-12-12T12:12:12.000000012
+221,EPIC,Test Epic,NEW,Test Epic,30,2023-12-13T12:12:12.000000012
+222,SUBTASK,Test Subtask,NEW,Test Subtask,221,30,2023-12-13T12:12:12.000000012
 
+221,222,220,

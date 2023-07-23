@@ -8,7 +8,6 @@ public abstract class AbstractTask {
     protected String description;
     protected int id;
     protected Status status;
-    protected int epicId;
     protected LocalDateTime startTime;
     protected int duration;
 
@@ -83,9 +82,6 @@ public abstract class AbstractTask {
         this.duration = duration;
     }
 
-    public int getEpicId() {
-        return epicId;
-    }
 
     public abstract TypeTasks getType();
 
@@ -94,7 +90,7 @@ public abstract class AbstractTask {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractTask that = (AbstractTask) o;
-        return id == that.id && epicId == that.epicId && duration == that.duration && Objects.equals(name, that.name) && Objects.equals(description, that.description) && status == that.status && Objects.equals(startTime, that.startTime);
+        return id == that.id;
     }
 
     @Override
