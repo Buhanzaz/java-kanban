@@ -1,7 +1,7 @@
 package service.manager;
 
 import model.*;
-import service.exception.intersectionException;
+import service.exception.IntersectionException;
 import service.interfaces.HistoryManager;
 import service.storage.Repository;
 import service.interfaces.TaskManager;
@@ -27,9 +27,10 @@ public class InMemoryTaskManager implements TaskManager {
     /*Create*/
     @Override
     public int create(Task task) {
+        addPrioritizedTasks(task);
+
         task.setId(id++);
         repository.getTasksHashMap().put(task.getId(), task);
-        addPrioritizedTasks(task);
         return task.getId();
     }
 
@@ -42,6 +43,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int create(Subtask subtask) {
+        addPrioritizedTasks(subtask);
+
         int subtaskId;
         int epicId = subtask.getEpicId();
         Epic epic = repository.getEpicHashMap().get(epicId);
@@ -53,7 +56,6 @@ public class InMemoryTaskManager implements TaskManager {
             epic.addSubtasksId(subtaskId);
             epicUpdateStatus(epicId);
             updateEpicTime(epic);
-            addPrioritizedTasks(subtask);
         }
         return subtask.getId();
     }
@@ -61,6 +63,8 @@ public class InMemoryTaskManager implements TaskManager {
     /*Update*/
     @Override
     public void update(Task task) {
+        addPrioritizedTasks(task);
+
         int taskId = task.getId();
         Task taskInMap = repository.getTasksHashMap().get(taskId);
 
@@ -83,6 +87,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void update(Subtask subtask) {
+        addPrioritizedTasks(subtask);
+
         int subtaskId = subtask.getId();
         int epicId = subtask.getEpicId();
         Subtask subtaskInMap = repository.getSubtaskHashMap().get(subtaskId);
@@ -277,7 +283,7 @@ public class InMemoryTaskManager implements TaskManager {
             if (endTime.isBefore(entryStartTime)) {
                 continue;
             }
-            throw new intersectionException("Задача " + task.getId() + " пересекается с задачей № " + abstractTask.getId());
+            throw new IntersectionException("Задача " + task.getId() + " пересекается с задачей № " + abstractTask.getId());
         }
         sortedTaskByTime.add(task);
     }

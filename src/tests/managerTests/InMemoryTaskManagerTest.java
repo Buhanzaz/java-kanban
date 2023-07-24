@@ -28,13 +28,4 @@ public class InMemoryTaskManagerTest extends AbstractTaskManagerTest<InMemoryTas
         savedSubtask = manager.getSubtaskById(subtaskId);
     }
 
-    @Test
-    void updateEpicTime() {
-
-    }
-
-    @Test
-    void addPrioritizedTasks() {
-
-    }
 }

@@ -94,7 +94,7 @@ class EpicTaskTest extends AbstractTaskTest {
     @Test
     public void allSubtasksStatusInProgressEpicTest() {
         taskManager.update(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", idSubtask, Status.IN_PROGRESS, 30, LocalDateTime.now()));
-        taskManager.update(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", idSubtask2, Status.IN_PROGRESS, 30, LocalDateTime.now()));
+        taskManager.update(new Subtask(idEpic, "Test Subtask", "Description Subtask Test", idSubtask2, Status.IN_PROGRESS, 30, LocalDateTime.MIN));
 
         List<Integer> testSubtaskId = List.of(idSubtask, idSubtask2);
         List<Integer> testSubtaskId2 = taskManager.getEpicById(idEpic).getSubtasksId();
