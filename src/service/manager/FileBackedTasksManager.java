@@ -14,13 +14,14 @@ import static service.manager.CSVTaskFormatter.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final File file;
+    public static FileBackedTasksManager fileBacked;
 
     public FileBackedTasksManager(File file) {
         this.file = file;
     }
 
     public static FileBackedTasksManager loadFromFile(File file) {
-        FileBackedTasksManager fileBacked = new FileBackedTasksManager(file);
+        fileBacked = new FileBackedTasksManager(file);
         fileBacked.read();
         return fileBacked;
     }
@@ -43,7 +44,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     epic.addSubtasksId(subtask.getId());
                     updateEpicTime(epic);
                 }
-                InMemoryTaskManager.id = idTask;
+                fileBacked.id = idTask;
             }
             while (br.ready()) {
                 List<Integer> id = historyFromString(br.readLine());
@@ -58,7 +59,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void save() {
+    protected void save() {
         try (Writer fileWriter = new FileWriter(file)) {
             String firstLineCSV = "id,type,name,status,description,epicId,duration,startTime\n";
             fileWriter.write(firstLineCSV);
@@ -77,7 +78,33 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new ManagerSaveException("Error in save method");
         }
     }
+    protected void addAnyTask(AbstractTask task) {
+        switch (task.getType()) {
+            case TASKS:
+                repository.getTasksHashMap().put(task.getId(), (Task) task);
+                addPrioritizedTasks(task);
+                break;
+            case EPIC:
+                repository.getEpicHashMap().put(task.getId(), (Epic) task);
+                break;
+            case SUBTASK:
+                repository.getEpicHashMap().get(((Subtask) task).getEpicId()).addSubtasksId(task.getId());
+                repository.getSubtaskHashMap().put(task.getId(), (Subtask) task);
+                addPrioritizedTasks(task);
+        }
+    }
 
+    protected AbstractTask findAnyTask(int id) {
+        if (getTasks().contains(id)) {
+            return getTasks().get(id);
+        } else if (getEpics().contains(id)) {
+            return getEpics().get(id);
+        } else if (getSubtasks().contains(id)) {
+            return getSubtasks() .get(id);
+        }
+
+        return null;
+    }
     @Override
     public int create(Task task) {
         int id = super.create(task);

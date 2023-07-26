@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-abstract class AbstractTaskManagerTest<T extends TaskManager> {
+public abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
     T manager;
     Task task;

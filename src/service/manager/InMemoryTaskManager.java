@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    protected static int id = 1;
+    protected int id = 1;
     protected final Repository repository = new Repository();
     protected final HistoryManager historyManager = Manager.getDefaultHistory();
     protected final Set<AbstractTask> sortedTaskByTime = new TreeSet<>((time1, time2) -> {
@@ -266,7 +266,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setDuration(duration);
     }
 
-    private void addPrioritizedTasks(AbstractTask task) {
+    protected void addPrioritizedTasks(AbstractTask task) {
         LocalDateTime startTime = task.getStartTime();
         LocalDateTime endTime = task.getEndTime();
 
@@ -288,7 +288,7 @@ public class InMemoryTaskManager implements TaskManager {
         sortedTaskByTime.add(task);
     }
 
-    public List<AbstractTask> getPrioritizedTasks() {
+    public ArrayList<AbstractTask> getPrioritizedTasks() {
         return new ArrayList<>(sortedTaskByTime);
     }
 
