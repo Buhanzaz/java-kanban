@@ -5,13 +5,10 @@ import model.*;
 import service.manager.FileBackedTasksManager;
 import web.adapterTime.LocalDateTimeAdapter;
 import web.client.KVTaskClient;
-import web.exception.ClientLoadException;
-import web.server.KVServer;
+import web.exception.LoadException;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 public class HttpTaskManager extends FileBackedTasksManager {
@@ -56,7 +53,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
             JsonElement element = JsonParser.parseString(json);
             if (!element.isJsonArray()) {
-                throw new ClientLoadException("Ошибка при загрузке данных из клиента");
+                throw new LoadException("Ошибка при загрузке данных из клиента");
             }
 
             JsonArray array = element.getAsJsonArray();
@@ -66,7 +63,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
             for (JsonElement e : array) {
                 if (!e.isJsonObject()) {
-                    throw new ClientLoadException("Ошибка при загрузке данных из клиента");
+                    throw new LoadException("Ошибка при загрузке данных из клиента");
                 }
 
                 switch (key) {
@@ -91,23 +88,11 @@ public class HttpTaskManager extends FileBackedTasksManager {
                         if (t != null) {
                             manager.historyManager.add(t);
                         }
+                    default:
+                        throw new LoadException("Ошибка, неправильный тип задач при загрузке");
                 }
             }
         }
-
         return manager;
-    }
-    public static void main(String[] args) {
-        try {
-            new KVServer().start();
-            HttpTaskManager httpTaskManager = new HttpTaskManager("http://localhost:8078");
-            String json = Arrays.toString(new String[]{"Task{name='Название задачи 1', description=' ', id=1, status='NEW', duration='30', startTime='-999999999-01-01T00:00', endTime='-999999999-01-01T00:30'}\n"});
-            int i = httpTaskManager.create(new Task("Название задачи 1", " ", 30, LocalDateTime.of(2011,1,1,1,1,1,1)));
-            httpTaskManager.save();
-            HttpTaskManager.loadFromServer("http://localhost:8078");
-            //kvTaskClient.put(String.valueOf(TypeTasks.TASKS), json);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

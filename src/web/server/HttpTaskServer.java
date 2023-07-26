@@ -22,13 +22,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class HttpTaskServer {
     public static final int PORT = 8080;
-    private final HttpServer server;
+    private final HttpServer httpServer;
     private final TaskManager taskManager;
     private final Gson gson;
 
     public HttpTaskServer() throws IOException {
-        server = HttpServer.create(new InetSocketAddress(PORT), 0);
-        server.createContext("/tasks", this::handleTasks);
+        httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
+        httpServer.createContext("/tasks", this::handleTasks);
         taskManager = Manager.getDefault();
         gson = new GsonBuilder().serializeNulls()
                                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
@@ -36,6 +36,8 @@ public class HttpTaskServer {
     }
 
     private void handleTasks(HttpExchange exchange) {
+        final String pathTasks = "/tasks/";
+        final String pathTask = pathTasks + "task/";
         try {
             String path = exchange.getRequestURI().getPath();
             String method = exchange.getRequestMethod();
@@ -98,81 +100,91 @@ public class HttpTaskServer {
                     }
                     break;
                 case "POST":
-                    if (path.equals("/tasks/task/")) {
-                        json = readText(exchange);
-                        Task task = gson.fromJson(json, Task.class);
+                    switch (path) {
+                        case pathTask:
+                            json = readText(exchange);
+                            Task task = gson.fromJson(json, Task.class);
 
-                        if (task != null) {
-                            if (taskManager.getTasks().stream().map(Task::getId).anyMatch(tId -> tId == task.getId())) {
-                                taskManager.update(task);
-                            } else {
-                                taskManager.create(task);
+                            if (task != null) {
+                                if (taskManager.getTasks().stream().map(Task::getId).anyMatch(tId -> tId == task.getId())) {
+                                    taskManager.update(task);
+                                } else {
+                                    taskManager.create(task);
+                                }
                             }
-                        }
 
-                        exchange.sendResponseHeaders(200, 0);
-                    } else if (path.equals("/tasks/epic/")) {
-                        json = readText(exchange);
-                        Epic epic = gson.fromJson(json, Epic.class);
+                            exchange.sendResponseHeaders(200, 0);
+                            break;
+                        case "/tasks/epic/":
+                            json = readText(exchange);
+                            Epic epic = gson.fromJson(json, Epic.class);
 
-                        if (epic != null) {
-                            if (taskManager.getEpics().stream().map(Epic::getId).anyMatch(eId -> eId == epic.getId())) {
-                                taskManager.update(epic);
-                            } else {
-                                taskManager.create(epic);
+                            if (epic != null) {
+                                if (taskManager.getEpics().stream().map(Epic::getId).anyMatch(eId -> eId == epic.getId())) {
+                                    taskManager.update(epic);
+                                } else {
+                                    taskManager.create(epic);
+                                }
                             }
-                        }
 
-                        exchange.sendResponseHeaders(200, 0);
-                    } else if (path.equals("/tasks/subtask/")) {
-                        json = readText(exchange);
-                        Subtask subtask = gson.fromJson(json, Subtask.class);
+                            exchange.sendResponseHeaders(200, 0);
+                            break;
+                        case "/tasks/subtask/":
+                            json = readText(exchange);
+                            Subtask subtask = gson.fromJson(json, Subtask.class);
 
-                        if (subtask != null) {
-                            if (taskManager.getSubtasks().stream().map(Subtask::getId)
-                                    .anyMatch(stId -> stId == subtask.getId())
-                            ) {
-                                taskManager.update(subtask);
-                            } else {
-                                taskManager.create(subtask);
+                            if (subtask != null) {
+                                if (taskManager.getSubtasks().stream().map(Subtask::getId)
+                                        .anyMatch(stId -> stId == subtask.getId())
+                                ) {
+                                    taskManager.update(subtask);
+                                } else {
+                                    taskManager.create(subtask);
+                                }
                             }
-                        }
 
-                        exchange.sendResponseHeaders(200, 0);
-                    } else {
-                        sendText(exchange, "Некорректный запрос", 405);
+                            exchange.sendResponseHeaders(200, 0);
+                            break;
+                        default:
+                            sendText(exchange, "Некорректный запрос", 405);
+                            break;
                     }
                     break;
                 case "DELETE":
-                    if (path.equals("/tasks/task/")) {
-                        if (query == null) {
-                            taskManager.deleteTasks();
-                        } else {
-                            id = getIdFromQuery(query);
-                            taskManager.removeTaskById(id);
-                        }
+                    switch (path) {
+                        case "/tasks/task/":
+                            if (query == null) {
+                                taskManager.deleteTasks();
+                            } else {
+                                id = getIdFromQuery(query);
+                                taskManager.removeTaskById(id);
+                            }
 
-                        exchange.sendResponseHeaders(200, 0);
-                    } else if (path.equals("/tasks/subtask/")) {
-                        if (query == null) {
-                            taskManager.deleteSubtask();
-                        } else {
-                            id = getIdFromQuery(query);
-                            taskManager.removeSubtaskById(id);
-                        }
+                            exchange.sendResponseHeaders(200, 0);
+                            break;
+                        case "/tasks/subtask/":
+                            if (query == null) {
+                                taskManager.deleteSubtask();
+                            } else {
+                                id = getIdFromQuery(query);
+                                taskManager.removeSubtaskById(id);
+                            }
 
-                        exchange.sendResponseHeaders(200, 0);
-                    } else if (path.equals("/tasks/epic/")) {
-                        if (query == null) {
-                            taskManager.deleteTasks();
-                        } else {
-                            id = getIdFromQuery(query);
-                            taskManager.removeEpicById(id);
-                        }
+                            exchange.sendResponseHeaders(200, 0);
+                            break;
+                        case "/tasks/epic/":
+                            if (query == null) {
+                                taskManager.deleteTasks();
+                            } else {
+                                id = getIdFromQuery(query);
+                                taskManager.removeEpicById(id);
+                            }
 
-                        exchange.sendResponseHeaders(200, 0);
-                    } else {
-                        sendText(exchange, "Некорректный запрос", 405);
+                            exchange.sendResponseHeaders(200, 0);
+                            break;
+                        default:
+                            sendText(exchange, "Некорректный запрос", 405);
+                            break;
                     }
                     break;
                 default:
@@ -198,12 +210,12 @@ public class HttpTaskServer {
     public void start() {
         System.out.println("Запускаем сервер на порту " + PORT);
         System.out.println("Открой в браузере http://localhost:" + PORT + "/");
-        server.start();
+        httpServer.start();
     }
 
     public void stop() {
         System.out.println("Остановлен сервер на порту " + PORT);
-        server.stop(0);
+        httpServer.stop(0);
     }
 
     protected String readText(HttpExchange h) throws IOException {

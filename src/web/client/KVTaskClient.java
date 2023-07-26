@@ -1,26 +1,23 @@
 package web.client;
 
-import model.TypeTasks;
-import web.exception.ClientLoadException;
-import web.exception.ClientRegistrationException;
-import web.exception.ClientSaveException;
-import web.server.KVServer;
+import web.exception.LoadException;
+import web.exception.RegistrationAPIException;
+import web.exception.SaveException;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Arrays;
 
 public class KVTaskClient {
 
-    private final HttpClient client;
+    private final HttpClient httpclient;
     private final String URL;
     private final String API_TOKEN;
 
     public KVTaskClient(String URL) {
-        client = HttpClient.newHttpClient();
+        httpclient = HttpClient.newHttpClient();
         this.URL = URL;
         API_TOKEN = registerApiToken(URL);
     }
@@ -32,11 +29,11 @@ public class KVTaskClient {
                     .GET()
                     .uri(url)
                     .build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpclient.send(request, HttpResponse.BodyHandlers.ofString());
 
             return response.body();
         } catch (IOException | InterruptedException e) {
-            throw new ClientRegistrationException("Произошла ошибка при регистрации клиента", e);
+            throw new RegistrationAPIException("Ошибка при регистрации API_TOKEN");
         }
     }
 
@@ -48,10 +45,9 @@ public class KVTaskClient {
                     .uri(url)
                     .version(HttpClient.Version.HTTP_1_1)
                     .build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
+            httpclient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new ClientSaveException("Произошла ошибка при загрузке данных на сервер", e);
+            throw new SaveException("Ощибка при загрузке данных на Сервера");
         }
     }
 
@@ -63,22 +59,11 @@ public class KVTaskClient {
                     .uri(url)
                     .version(HttpClient.Version.HTTP_1_1)
                     .build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpclient.send(request, HttpResponse.BodyHandlers.ofString());
 
             return response.body();
         } catch (IOException | InterruptedException e) {
-            throw new ClientLoadException("Произошла ошибка при получении данных с сервера", e);
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            new KVServer().start();
-            KVTaskClient kvTaskClient = new KVTaskClient("http://localhost:8078");
-            String json = Arrays.toString(new String[]{"Task{name='Название задачи 1', description=' ', id=1, status='NEW', duration='30', startTime='-999999999-01-01T00:00', endTime='-999999999-01-01T00:30'}\n"});
-            kvTaskClient.put(String.valueOf(TypeTasks.TASKS), json);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new LoadException("Ощибка при загрузке данных из Сервера");
         }
     }
 }
