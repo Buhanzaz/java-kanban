@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.time.LocalDateTime;
 
-public class TaskTest extends AbstractTaskTest {
+public class TaskTest extends AbstractTaskTest<Task> {
     @BeforeEach
     void setUp() {
         task = new Task("Test Name", "Test Description", 0, Status.NEW, 30, LocalDateTime.of(2000, 1, 1, 1, 1, 1, 1));

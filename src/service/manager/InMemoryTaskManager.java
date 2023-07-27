@@ -288,6 +288,33 @@ public class InMemoryTaskManager implements TaskManager {
         sortedTaskByTime.add(task);
     }
 
+    protected void saveTask(AbstractTask task) {
+        switch (task.getType()) {
+            case TASKS:
+                repository.getTasksHashMap().put(task.getId(), (Task) task);
+                addPrioritizedTasks(task);
+                break;
+            case EPIC:
+                repository.getEpicHashMap().put(task.getId(), (Epic) task);
+                break;
+            case SUBTASK:
+                repository.getEpicHashMap().get(((Subtask) task).getEpicId()).addSubtasksId(task.getId());
+                repository.getSubtaskHashMap().put(task.getId(), (Subtask) task);
+                addPrioritizedTasks(task);
+        }
+    }
+
+    protected AbstractTask searchTaskById(int id) {
+        if (repository.getTasksHashMap().containsKey(id)) {
+            return getTasks().get(id);
+        } else if (repository.getEpicHashMap().containsKey(id)) {
+            return getEpics().get(id);
+        } else if (repository.getSubtaskHashMap().containsKey(id)) {
+            return getSubtasks().get(id);
+        }
+        return null;
+    }
+
     public ArrayList<AbstractTask> getPrioritizedTasks() {
         return new ArrayList<>(sortedTaskByTime);
     }
@@ -296,5 +323,4 @@ public class InMemoryTaskManager implements TaskManager {
     public List<AbstractTask> getHistory() {
         return historyManager.getHistory();
     }
-
 }

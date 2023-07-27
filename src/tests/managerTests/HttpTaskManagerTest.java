@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HttpTaskManagerTest extends AbstractTaskManagerTest<HttpTaskManager>{
+public class HttpTaskManagerTest extends AbstractTaskManagerTest<HttpTaskManager> {
     final URI url = URI.create("http://localhost:8080/tasks/task/");
     private KVServer kvServer;
     private HttpTaskServer taskServer;

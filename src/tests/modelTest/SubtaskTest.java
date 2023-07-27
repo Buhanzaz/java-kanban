@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SubtaskTest extends AbstractTaskTest {
+public class SubtaskTest extends AbstractTaskTest<Subtask> {
     @BeforeEach
     void setUp() {
         task = new Subtask(1, "Test Name", "Test Description", 0, Status.NEW,
@@ -21,7 +21,7 @@ public class SubtaskTest extends AbstractTaskTest {
     @Test
     void getEpicId() {
         int id = 1;
-        Subtask subtask = (Subtask) task;
+        Subtask subtask = task;
         assertEquals(id, subtask.getEpicId());
     }
 }

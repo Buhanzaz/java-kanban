@@ -70,21 +70,21 @@ public class HttpTaskManager extends FileBackedTasksManager {
                     case "TASKS":
                         Task task = gson.fromJson(e, Task.class);
                         manager.id = Math.max(task.getId(), manager.id);
-                        manager.addAnyTask(task);
+                        manager.saveTask(task);
                         break;
                     case "EPICS":
                         Epic epic = gson.fromJson(e, Epic.class);
                         manager.id = Math.max(epic.getId(), manager.id);
-                        manager.addAnyTask(epic);
+                        manager.saveTask(epic);
                         break;
                     case "SUBTASKS":
                         Subtask subtask = gson.fromJson(e, Subtask.class);
                         manager.id = Math.max(subtask.getId(), manager.id);
-                        manager.addAnyTask(subtask);
+                        manager.saveTask(subtask);
                         break;
                     case "HISTORY":
                         int id = e.getAsJsonObject().get("id").getAsInt();
-                        AbstractTask t = manager.findAnyTask(id);
+                        AbstractTask t = manager.searchTaskById(id);
                         if (t != null) {
                             manager.historyManager.add(t);
                         }

@@ -78,33 +78,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new ManagerSaveException("Error in save method");
         }
     }
-    protected void addAnyTask(AbstractTask task) {
-        switch (task.getType()) {
-            case TASKS:
-                repository.getTasksHashMap().put(task.getId(), (Task) task);
-                addPrioritizedTasks(task);
-                break;
-            case EPIC:
-                repository.getEpicHashMap().put(task.getId(), (Epic) task);
-                break;
-            case SUBTASK:
-                repository.getEpicHashMap().get(((Subtask) task).getEpicId()).addSubtasksId(task.getId());
-                repository.getSubtaskHashMap().put(task.getId(), (Subtask) task);
-                addPrioritizedTasks(task);
-        }
-    }
 
-    protected AbstractTask findAnyTask(int id) {
-        if (getTasks().contains(id)) {
-            return getTasks().get(id);
-        } else if (getEpics().contains(id)) {
-            return getEpics().get(id);
-        } else if (getSubtasks().contains(id)) {
-            return getSubtasks() .get(id);
-        }
-
-        return null;
-    }
     @Override
     public int create(Task task) {
         int id = super.create(task);

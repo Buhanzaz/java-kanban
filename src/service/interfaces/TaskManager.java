@@ -13,7 +13,6 @@ public interface TaskManager {
 
     int create(Subtask subtask);
 
-
     /*Update*/
     void update(Task task);
 
@@ -21,14 +20,12 @@ public interface TaskManager {
 
     void update(Subtask subtask);
 
-
     /*Show Tasks*/
     ArrayList<Task> getTasks();
 
     ArrayList<Epic> getEpics();
 
     ArrayList<Subtask> getSubtasks();
-
 
     /*Show by ID*/
     Task getTaskById(int taskId);
@@ -38,7 +35,6 @@ public interface TaskManager {
     Subtask getSubtaskById(int subtaskId);
 
     ArrayList<Subtask> getSubtasksInEpic(int epicId);
-
 
     /*Delete all Task*/
     void deleteTasks();
@@ -57,5 +53,4 @@ public interface TaskManager {
     List<AbstractTask> getHistory();
 
     ArrayList<AbstractTask> getPrioritizedTasks();
-
 }

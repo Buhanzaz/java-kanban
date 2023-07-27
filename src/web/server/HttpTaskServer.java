@@ -47,7 +47,7 @@ public class HttpTaskServer {
             String query = exchange.getRequestURI().getQuery();
 
             int id;
-            String json = null;
+            String json = "[]";
             switch (method) {
                 case "GET":
                     switch (path) {
@@ -208,7 +208,8 @@ public class HttpTaskServer {
 
     private int getIdFromQuery(String query) {
         try {
-            return Integer.parseInt(query.split("=")[1]);
+            String[] id = query.split("=");
+            return Integer.parseInt(id[1]);
         } catch (NumberFormatException e) {
             return -1;
         }

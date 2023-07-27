@@ -1,6 +1,6 @@
 package service.exception;
 
-public class TaskException extends RuntimeException{
+public class TaskException extends RuntimeException {
     public TaskException(String message) {
         super(message);
     }
