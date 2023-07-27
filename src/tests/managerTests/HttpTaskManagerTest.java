@@ -4,19 +4,18 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import model.Epic;
+import model.Subtask;
 import model.Task;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.interfaces.TaskManager;
 import service.manager.Manager;
-import tests.managerTests.AbstractTaskManagerTest;
-import web.adapterTime.LocalDateTimeAdapter;
+import web.adapterTime.TimeAdapter;
 import web.server.HttpTaskServer;
 import web.server.KVServer;
 import web.service.HttpTaskManager;
-
 
 import java.io.IOException;
 import java.net.URI;
@@ -28,31 +27,56 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HttpTaskManagerTest {
-
+public class HttpTaskManagerTest extends AbstractTaskManagerTest<HttpTaskManager>{
+    final URI url = URI.create("http://localhost:8080/tasks/task/");
     private KVServer kvServer;
     private HttpTaskServer taskServer;
     private static HttpClient client;
     private static HttpResponse.BodyHandler<String> bodyHandler;
     private static Gson gson;
-    TaskManager manager;
+    private HttpResponse<String> response;
 
     @BeforeAll
     public static void beforeAll() {
         client = HttpClient.newHttpClient();
         bodyHandler = HttpResponse.BodyHandlers.ofString();
         gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).serializeNulls().create();
+                .registerTypeAdapter(LocalDateTime.class, new TimeAdapter()).serializeNulls().create();
     }
 
     @BeforeEach
-    public void beforeEach() throws IOException {
+    public void beforeEach() throws IOException, InterruptedException {
         kvServer = new KVServer();
         kvServer.start();
         taskServer = new HttpTaskServer();
         taskServer.start();
 
         manager = Manager.getDefault();
+        task = new Task("Test Task", "Test Task", 30, LocalDateTime.of(2013, 12, 12, 12, 12, 12, 12));
+        epic = new Epic("Test  Epic", "Test  Epic");
+        taskId = manager.create(task);
+        epicId = manager.create(epic);
+        savedEpic = manager.getEpicById(epicId);
+        subtask = new Subtask(epicId, "Test Subtask", "Test Subtask", 30, LocalDateTime.of(2023, 12, 13, 12, 12, 12, 12));
+        subtaskId = manager.create(subtask);
+        savedSubtask = manager.getSubtaskById(subtaskId);
+        savedTask = manager.getTaskById(taskId);
+
+        String json = gson.toJson(task);
+
+        HttpRequest requestPost = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .version(HttpClient.Version.HTTP_1_1)
+                .uri(url)
+                .build();
+        client.send(requestPost, bodyHandler);
+
+        HttpRequest requestGet = HttpRequest.newBuilder()
+                .GET()
+                .uri(url).
+                version(HttpClient.Version.HTTP_1_1)
+                .build();
+        response = client.send(requestGet, bodyHandler);
     }
 
     @AfterEach
@@ -62,89 +86,39 @@ public class HttpTaskManagerTest {
     }
 
     @Test
-    public void shouldGetRequestWithRequestMethodGET() throws IOException, InterruptedException {
-        LocalDateTime now = LocalDateTime.now();
-        Task task1 = new Task("Название задачи 1", " ", 30, LocalDateTime.of(2000,1,1,1,1,1,1));
-        Task task2 = new Task("Название задачи 2", " ", 30, LocalDateTime.of(2001,1,1,1,1,1,1));
-
-        manager.create(task1);
-        manager.create(task2);
-
-        final URI url = URI.create("http://localhost:8080/tasks/task/");
-
-        final String json1 = gson.toJson(task1);
-        final String json2 = gson.toJson(task2);
-
-        final HttpRequest request1 = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(json1))
-                .version(HttpClient.Version.HTTP_1_1)
-                .uri(url).build();
-        client.send(request1, bodyHandler);
-
-        final HttpRequest request2 = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(json2)).version(HttpClient.Version.HTTP_1_1).uri(url).build();
-        client.send(request2, bodyHandler);
-
-        final HttpRequest request3 = HttpRequest.newBuilder().GET().uri(url).version(HttpClient.Version.HTTP_1_1).build();
-        HttpResponse<String> response = client.send(request3, bodyHandler);
-
+    public void shouldGetRequestWithRequestMethodGET() {
         assertTrue(JsonParser.parseString(response.body()).isJsonArray());
 
         final JsonArray array = JsonParser.parseString(response.body()).getAsJsonArray();
-        final Task jsonTask1 = gson.fromJson(array.get(0), Task.class);
-        final Task jsonTask2 = gson.fromJson(array.get(1), Task.class);
+        final Task jsonTask = gson.fromJson(array.get(0), Task.class);
 
-        assertEquals(task1, jsonTask1);
-        assertEquals(task2, jsonTask2);
+        assertEquals(task, jsonTask);
     }
 
     @Test
     public void shouldGetRequestWithRequestMethodDELETE() throws IOException, InterruptedException {
-        LocalDateTime now = LocalDateTime.now();
-        Task task1 = new Task("Название задачи 1", " ", 30, LocalDateTime.MIN);
-        Task task2 = new Task("Название задачи 2", " ", 30, LocalDateTime.MIN.plusMinutes(10));
+        final HttpRequest requestGet = HttpRequest.newBuilder().GET().uri(url).version(HttpClient.Version.HTTP_1_1).build();
+        HttpResponse<String> response = client.send(requestGet, bodyHandler);
 
-        manager.create(task1);
-        manager.create(task2);
+        assertTrue(JsonParser.parseString(response.body()).isJsonArray());
 
-        final URI url = URI.create("http://localhost:8080/tasks/task/");
+        final JsonArray array = JsonParser.parseString(response.body()).getAsJsonArray();
+        final Task jsonTask = gson.fromJson(array.get(0), Task.class);
 
-        final String json1 = gson.toJson(task1);
-        final String json2 = gson.toJson(task2);
+        assertEquals(task, jsonTask);
 
-        final HttpRequest request1 = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(json1))
-                .version(HttpClient.Version.HTTP_1_1).uri(url).build();
-        client.send(request1, bodyHandler);
 
-        final HttpRequest request2 = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(json2)).uri(url).build();
-        client.send(request2, bodyHandler);
+        final HttpRequest requestDelete = HttpRequest.newBuilder()
+                .DELETE()
+                .uri(URI.create("http://localhost:8080/tasks/task/?id=1"))
+                .build();
+        client.send(requestDelete, bodyHandler);
 
-        final HttpRequest request3 = HttpRequest.newBuilder().GET().uri(url).version(HttpClient.Version.HTTP_1_1).build();
-        HttpResponse<String> response1 = client.send(request3, bodyHandler);
-
-        assertTrue(JsonParser.parseString(response1.body()).isJsonArray());
-
-        final JsonArray array = JsonParser.parseString(response1.body()).getAsJsonArray();
-        final Task jsonTask1 = gson.fromJson(array.get(0), Task.class);
-        final Task jsonTask2 = gson.fromJson(array.get(1), Task.class);
-
-        assertEquals(task1, jsonTask1);
-        assertEquals(task2, jsonTask2);
-
-        final HttpRequest request4 = HttpRequest.newBuilder()
-                .DELETE().uri(URI.create("http://localhost:8080/tasks/task/?id=1")).build();
-        client.send(request4, bodyHandler);
-
-        HttpResponse<String> response2 = client.send(request3, bodyHandler);
+        HttpResponse<String> response2 = client.send(requestGet, bodyHandler);
 
         assertTrue(JsonParser.parseString(response2.body()).isJsonArray());
 
-        final JsonArray array2 = JsonParser.parseString(response2.body()).getAsJsonArray();
-
-        final Task jsonTask = gson.fromJson(array2.get(0), Task.class);
-
-        assertEquals(task2, jsonTask);
+        final JsonArray emptyArray = JsonParser.parseString(response2.body()).getAsJsonArray();
+        assertTrue(emptyArray.isEmpty());
     }
 }

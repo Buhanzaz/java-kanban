@@ -9,7 +9,7 @@ import model.Subtask;
 import model.Task;
 import service.interfaces.TaskManager;
 import service.manager.Manager;
-import web.adapterTime.LocalDateTimeAdapter;
+import web.adapterTime.TimeAdapter;
 
 
 import java.io.IOException;
@@ -31,72 +31,80 @@ public class HttpTaskServer {
         httpServer.createContext("/tasks", this::handleTasks);
         taskManager = Manager.getDefault();
         gson = new GsonBuilder().serializeNulls()
-                                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                                .create();
+                .registerTypeAdapter(LocalDateTime.class, new TimeAdapter())
+                .create();
     }
 
     private void handleTasks(HttpExchange exchange) {
         final String pathTasks = "/tasks/";
         final String pathTask = pathTasks + "task/";
+        final String pathEpic = pathTasks + "epic/";
+        final String pathSubtask = pathTask + "subtask/";
+        final String pathHistory = pathTasks + "history";
         try {
             String path = exchange.getRequestURI().getPath();
             String method = exchange.getRequestMethod();
             String query = exchange.getRequestURI().getQuery();
+
             int id;
-            String json;
+            String json = null;
             switch (method) {
                 case "GET":
-                    if (path.equals("/tasks/")) {
-                        json = gson.toJson(taskManager.getPrioritizedTasks());
-
-                        sendText(exchange, json, 200);
-                    } else if (path.equals("/tasks/history")) {
-                        json = gson.toJson(taskManager.getHistory());
-
-                        sendText(exchange, json, 200);
-                    } else if (Pattern.matches("^/tasks/subtask/epic/?\\d+$", path)) {
-                        id = getIdFromQuery(query);
-                        if (id != -1) {
-                            List<Subtask> subtasks = taskManager.getSubtasksInEpic(id);
-                            json = gson.toJson(subtasks);
+                    switch (path) {
+                        case pathTasks:
+                            json = gson.toJson(taskManager.getPrioritizedTasks());
 
                             sendText(exchange, json, 200);
-                        }
-                    } else if (path.equals("/tasks/task/")) {
-                        if (query == null) {
-                            List<Task> tasks = taskManager.getTasks();
-                            json = gson.toJson(tasks);
-                        } else {
-                            id = getIdFromQuery(query);
-                            Task task = taskManager.getTaskById(id);
-                            json = gson.toJson(task);
-                        }
+                            break;
+                        case pathTask:
+                            if (query != null) {
+                                id = getIdFromQuery(query);
+                                Task task = taskManager.getTaskById(id);
+                                json = gson.toJson(task);
+                            } else {
+                                List<Task> tasks = taskManager.getTasks();
+                                json = gson.toJson(tasks);
+                            }
 
-                        sendText(exchange, json, 200);
-                    } else if (path.equals("/tasks/epic/")) {
-                        if (query == null) {
-                            List<Epic> epics = taskManager.getEpics();
-                            json = gson.toJson(epics);
-                        } else {
-                            id = getIdFromQuery(query);
-                            Task task = taskManager.getTaskById(id);
-                            json = gson.toJson(task);
-                        }
+                            sendText(exchange, json, 200);
+                            break;
+                        case pathEpic:
+                            if (query != null) {
+                                id = getIdFromQuery(query);
+                                Task task = taskManager.getTaskById(id);
+                                json = gson.toJson(task);
+                            } else {
+                                List<Epic> epics = taskManager.getEpics();
+                                json = gson.toJson(epics);
+                            }
 
-                        sendText(exchange, json, 200);
-                    } else if (path.equals("/tasks/subtask/")) {
-                        if (query == null) {
-                            List<Subtask> subtasks = taskManager.getSubtasks();
-                            json = gson.toJson(subtasks);
-                        } else {
-                            id = getIdFromQuery(query);
-                            Subtask task = taskManager.getSubtaskById(id);
-                            json = gson.toJson(task);
-                        }
+                            sendText(exchange, json, 200);
+                            break;
+                        case pathSubtask:
+                            if (query != null) {
+                                id = getIdFromQuery(query);
+                                Subtask task = taskManager.getSubtaskById(id);
+                                json = gson.toJson(task);
+                            } else if (Pattern.matches("^/tasks/subtask/epic/?\\d+$", path)) {
+                                if (getIdFromQuery(query) != -1) {
+                                    List<Subtask> subtasks = taskManager.getSubtasksInEpic(getIdFromQuery(query));
+                                    json = gson.toJson(subtasks);
+                                }
+                            } else {
+                                List<Subtask> subtasks = taskManager.getSubtasks();
+                                json = gson.toJson(subtasks);
+                            }
 
-                        sendText(exchange, json, 200);
-                    } else {
-                        sendText(exchange, "Некорректный запрос", 405);
+                            sendText(exchange, json, 200);
+                            break;
+                        case pathHistory:
+                            json = gson.toJson(taskManager.getHistory());
+
+                            sendText(exchange, json, 200);
+                            break;
+                        default:
+                            sendText(exchange, "Некорректный запрос", 405);
+                            break;
                     }
                     break;
                 case "POST":
@@ -115,7 +123,7 @@ public class HttpTaskServer {
 
                             exchange.sendResponseHeaders(200, 0);
                             break;
-                        case "/tasks/epic/":
+                        case pathEpic:
                             json = readText(exchange);
                             Epic epic = gson.fromJson(json, Epic.class);
 
@@ -129,7 +137,7 @@ public class HttpTaskServer {
 
                             exchange.sendResponseHeaders(200, 0);
                             break;
-                        case "/tasks/subtask/":
+                        case pathSubtask:
                             json = readText(exchange);
                             Subtask subtask = gson.fromJson(json, Subtask.class);
 
@@ -152,7 +160,7 @@ public class HttpTaskServer {
                     break;
                 case "DELETE":
                     switch (path) {
-                        case "/tasks/task/":
+                        case pathTask:
                             if (query == null) {
                                 taskManager.deleteTasks();
                             } else {
@@ -162,22 +170,22 @@ public class HttpTaskServer {
 
                             exchange.sendResponseHeaders(200, 0);
                             break;
-                        case "/tasks/subtask/":
-                            if (query == null) {
-                                taskManager.deleteSubtask();
-                            } else {
-                                id = getIdFromQuery(query);
-                                taskManager.removeSubtaskById(id);
-                            }
-
-                            exchange.sendResponseHeaders(200, 0);
-                            break;
-                        case "/tasks/epic/":
+                        case pathEpic:
                             if (query == null) {
                                 taskManager.deleteTasks();
                             } else {
                                 id = getIdFromQuery(query);
                                 taskManager.removeEpicById(id);
+                            }
+
+                            exchange.sendResponseHeaders(200, 0);
+                            break;
+                        case pathSubtask:
+                            if (query == null) {
+                                taskManager.deleteSubtask();
+                            } else {
+                                id = getIdFromQuery(query);
+                                taskManager.removeSubtaskById(id);
                             }
 
                             exchange.sendResponseHeaders(200, 0);
@@ -200,8 +208,7 @@ public class HttpTaskServer {
 
     private int getIdFromQuery(String query) {
         try {
-            String[] parsedQuery = query.split("=");
-            return Integer.parseInt(parsedQuery[1]);
+            return Integer.parseInt(query.split("=")[1]);
         } catch (NumberFormatException e) {
             return -1;
         }

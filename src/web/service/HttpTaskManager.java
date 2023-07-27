@@ -3,7 +3,7 @@ package web.service;
 import com.google.gson.*;
 import model.*;
 import service.manager.FileBackedTasksManager;
-import web.adapterTime.LocalDateTimeAdapter;
+import web.adapterTime.TimeAdapter;
 import web.client.KVTaskClient;
 import web.exception.LoadException;
 
@@ -15,7 +15,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     private static KVTaskClient client;
     private static final Gson gson = new GsonBuilder().serializeNulls()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new TimeAdapter())
             .create();
     private static final String[] KEYS = {"TASKS", "EPICS", "SUBTASKS", "HISTORY"};
 
