@@ -30,14 +30,16 @@ public class KVTaskClient {
                     .uri(url)
                     .build();
             HttpResponse<String> response = httpclient.send(request, HttpResponse.BodyHandlers.ofString());
-
+            if (response.statusCode() != 200) {
+                throw new RegistrationAPIException("Ошибка при регистрации API_TOKEN! Код ошибки: " + response.statusCode());
+            }
             return response.body();
         } catch (IOException | InterruptedException e) {
             throw new RegistrationAPIException("Ошибка при регистрации API_TOKEN");
         }
     }
 
-    public void put(String key, String json) {
+    public void saveToServer(String key, String json) {
         try {
             URI url = URI.create(String.format("%s/save/%s/?API_TOKEN=%s", URL, key, API_TOKEN));
             HttpRequest request = HttpRequest.newBuilder()
@@ -47,7 +49,7 @@ public class KVTaskClient {
                     .build();
             httpclient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new SaveException("Ощибка при загрузке данных на Сервера");
+            throw new SaveException("Ошибка при загрузке данных на Сервер");
         }
     }
 

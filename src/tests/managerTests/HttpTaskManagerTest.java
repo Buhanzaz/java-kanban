@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.manager.Manager;
-import web.adapterTime.TimeAdapter;
+import web.adapter.time.TimeAdapter;
 import web.server.HttpTaskServer;
 import web.server.KVServer;
 import web.service.HttpTaskManager;

@@ -3,7 +3,7 @@ package web.service;
 import com.google.gson.*;
 import model.*;
 import service.manager.FileBackedTasksManager;
-import web.adapterTime.TimeAdapter;
+import web.adapter.time.TimeAdapter;
 import web.client.KVTaskClient;
 import web.exception.LoadException;
 
@@ -26,20 +26,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     @Override
     protected void save() {
-        List<Task> taskList = getTasks();
-        List<Subtask> subtaskList = getSubtasks();
-        List<Epic> epicList = getEpics();
-        List<AbstractTask> history = getHistory();
-
-        String tasksJson = gson.toJson(taskList);
-        String subtasksJson = gson.toJson(subtaskList);
-        String epicsJson = gson.toJson(epicList);
-        String historyJson = gson.toJson(history);
-
-        List<String> toSave = List.of(tasksJson, subtasksJson, epicsJson, historyJson);
-        for (int i = 0; i < KEYS.length; i++) {
-            client.put(KEYS[i], toSave.get(i));
-        }
+        client.saveToServer(KEYS[0], gson.toJson(getTasks()));
+        client.saveToServer(KEYS[1], gson.toJson(getEpics()));
+        client.saveToServer(KEYS[2], gson.toJson(getSubtasks()));
+        client.saveToServer(KEYS[3], gson.toJson(getHistory()));
     }
 
     public static HttpTaskManager loadFromServer(String URL) {

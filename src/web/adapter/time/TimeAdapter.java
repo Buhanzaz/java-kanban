@@ -1,4 +1,4 @@
-package web.adapterTime;
+package web.adapter.time;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
