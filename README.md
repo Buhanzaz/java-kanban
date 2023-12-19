@@ -1,2 +1,2 @@
-# java-kanban
-Repository for homework project.
+# Java-kanban
+Планировщик задач
