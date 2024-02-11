@@ -14,7 +14,7 @@ import static service.manager.CSVTaskFormatter.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final File file;
-    public static FileBackedTasksManager fileBacked;
+    private static FileBackedTasksManager fileBacked;
 
     public FileBackedTasksManager(File file) {
         this.file = file;

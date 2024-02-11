@@ -13,7 +13,7 @@ public abstract class AbstractTask {
 
 
     /*Constructor to update*/
-    public AbstractTask(String name, String description, int id, Status status) {
+    protected AbstractTask(String name, String description, int id, Status status) {
         this.name = name;
         this.description = description;
         this.id = id;
@@ -21,7 +21,7 @@ public abstract class AbstractTask {
     }
 
     /*Constructor to create*/
-    public AbstractTask(String name, String description) {
+    protected AbstractTask(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
